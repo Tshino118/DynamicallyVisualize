@@ -1,4 +1,5 @@
 import base64
+from genericpath import isfile
 import io
 import pathlib
 import os
@@ -11,6 +12,7 @@ from PIL import Image
 from io import BytesIO
 from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
+from numpy.lib.arraysetops import unique
 
 import pandas as pd
 import plotly.graph_objs as go
@@ -19,34 +21,70 @@ import scipy.spatial.distance as spatial_distance
 # get relative data folder
 PATH = pathlib.Path(__file__).parent
 DATA_PATH = PATH.joinpath("asset/data").resolve()
-data_dict = {
-    "lerp": {'label':'linear interporation',
-        'data':pd.read_csv(DATA_PATH.joinpath("matrix/lerp_matrix.csv"))
+path_isfile=os.path.isfile
+path_isdir=os.path.isdir
+
+#feature setting
+feature_dict={
+    "feature":{
+        'label':'data feature',
+        'data':pd.read_csv(DATA_PATH.joinpath("features.csv"))
+    },
+    'statistics':{
+        'label':'data statistics',
+        'data':pd.read_csv(DATA_PATH.joinpath("statistics.csv"))
     }
 }
-if(os.path.isfile(DATA_PATH.joinpath("matrix/meanZero_matrix.csv"))==True):
+
+#data setting
+data_dict = {
+    "lerp": {'label':'linear interporation',
+        'data':pd.read_csv(DATA_PATH.joinpath("lerp.csv"))
+    }
+}
+if(path_isfile(DATA_PATH.joinpath("meanZero.csv"))==True):
     data_dict={
         "meanZero": {
             'label':'mean zero',
-            'data':pd.read_csv(DATA_PATH.joinpath("matrix/meanZero_matrix.csv"))
+            'data':pd.read_csv(DATA_PATH.joinpath("meanZero.csv"))
         }
     }
-
-if(os.path.isfile(DATA_PATH.joinpath("matrix/medianZero_matrix.csv"))==False):
+if(path_isfile(DATA_PATH.joinpath("medianZero.csv"))==False):
     data_dict={
         "medianZero": {
             'label':'median zero',
-            'data':pd.read_csv(DATA_PATH.joinpath("matrix/medianZero_matrix.csv"))
+            'data':pd.read_csv(DATA_PATH.joinpath("medianZero.csv"))
         }
     }
-
-if(os.path.isfile(DATA_PATH.joinpath("matrix/firstPointZero_matrix.csv"))==False):
+if(path_isfile(DATA_PATH.joinpath("firstPointZero.csv"))==False):
     data_dict={
         "firstPointZero": {
             'label':'first point zero',
-            'data':pd.read_csv(DATA_PATH.joinpath("matrix/firstPointZero_matrix.csv"))
+            'data':pd.read_csv(DATA_PATH.joinpath("firstPointZero.csv"))
         }
     }
+
+idSeries=feature_dict['feature']['data']['id_user']
+eye_stateSeries=feature_dict['feature']['data']['eye_state']
+weekSeries=feature_dict['feature']['data']['week']
+checklist_dict= {
+    'id_user':{
+        'data':idSeries,
+        'options':{'label':idSeries.unique(),'value':[np.where((idSeries==key), True,False) for key in idSeries.unique()]}
+    },
+    'eye_state':{
+        'data':eye_stateSeries,
+        'options':{'label':eye_stateSeries.unique(),'value':[np.where((eye_stateSeries==key), True,False) for key in eye_stateSeries.unique()]}
+    },
+    'week':{
+        'data':weekSeries,
+        'options':{'label':weekSeries.unique(),'value':[np.where((weekSeries==key), True,False) for key in weekSeries.unique()]}
+    }
+}
+if(path_isdir(DATA_PATH.joinpath('kMeans'))==True):
+    kmeans_dict
+    
+
 
 with open(PATH.joinpath("asset/demo_intro.md"), "r") as file:
     demo_intro_md = file.read()
@@ -91,6 +129,31 @@ def NamedSlider(name, short, min, max, step, val, marks=None):
                         marks=marks,
                         step=step,
                         value=val,
+                    )
+                ],
+            ),
+        ],
+    )
+
+def NamedChecklist(name, short, options, val):
+    return html.Div(
+        style={"margin": "25px 5px 30px 0px"},
+        children=[
+            f"{name}:",
+            html.Div(
+                style={"margin-left": "5px"},
+                children=[
+                    dcc.Checklist(
+                        id=f"checklist-{short}-All",
+                        options={'label':'All','value':'All'},
+                        value=val,
+                        labelStyle={'display': 'inline-block'}
+                    ),
+                    dcc.Checklist(
+                        id=f"checklist-{short}",
+                        options=options,
+                        value=val,
+                        labelStyle={'display': 'inline-block'}
                     )
                 ],
             ),
@@ -202,21 +265,12 @@ def add_layout(app):
                                             i: str(i) for i in [2, 3, 4, 5, 6, 10, 15, 20]
                                         },
                                     ),
-                                    NamedSlider(
-                                        name="Perplexity",
-                                        short="perplexity",
-                                        min=3,
-                                        max=100,
-                                        step=None,
-                                        val=30,
-                                        marks={i: str(i) for i in [3, 10, 30, 50, 100]},
-                                    ),
-                                    NamedSlider(
+                                    options:=[{'label': 'New York City', 'value': 'NYC'},
+                                            {'label': 'Montréal', 'value': 'MTL'},
+                                            {'label': 'San Francisco', 'value': 'SF'}]
+                                    NamedChecklist(
                                         name="Initial PCA Dimensions",
-                                        short="pca-dimension",
-                                        min=25,
-                                        max=100,
-                                        step=None,
+                                        options=options,
                                         val=50,
                                         marks={i: str(i) for i in [25, 50, 100]},
                                     ),
