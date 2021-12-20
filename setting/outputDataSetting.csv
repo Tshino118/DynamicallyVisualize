@@ -1,0 +1,11 @@
+,switch
+feature,TRUE
+userSetting,TRUE
+information,TRUE
+lerp,TRUE
+statistics,TRUE
+histogram,False
+autoCorrelate,False
+meanZero,TRUE
+medianZero,TRUE
+firstPointZero,TRUE

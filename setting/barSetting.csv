@@ -1,0 +1,13 @@
+fig,feature,min,max
+histogram,x_range,-80,80
+histogram,y_range,-80,80
+histogram3d,x_range,-80,80
+histogram3d,y_range,-80,80
+histogram3d,z_range,5,65
+contour,x_range,-80,80
+contour,y_range,-80,80
+contour3d,x_range,-80,80
+contour3d,y_range,-80,80
+contour3d,z_range,5,65
+autoCorrelogram,x_range,0,12
+autoCorrelogram,y_range,-1,1

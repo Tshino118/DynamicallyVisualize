@@ -18,73 +18,148 @@ import pandas as pd
 import plotly.graph_objs as go
 import scipy.spatial.distance as spatial_distance
 
+import layoutplt
+
 # get relative data folder
 PATH = pathlib.Path(__file__).parent
 DATA_PATH = PATH.joinpath("asset/data").resolve()
+KMEANS_PATH = PATH.joinpath("asset/data/kMeans").resolve()
+
 path_isfile=os.path.isfile
 path_isdir=os.path.isdir
 
+input_data={
+    'lerp':{
+        'label':'linear interporation',
+        'descriotion':'Linear interpolation of missing data for each data.',
+        'data' :pd.read_csv(DATA_PATH.joinpath("lerp.csv")),
+    },
+    "meanZero": {
+        'label':'mean zero',
+        'description':'The average value of each data is zero.',
+        'data' :pd.read_csv(DATA_PATH.joinpath("meanZero.csv")),
+    },
+    "medianZero": {
+        'label':'median zero',
+        'description':'The median of each data set is zero.',
+        'data' :pd.read_csv(DATA_PATH.joinpath("medianZero.csv")),
+    },
+    "firstPointZero": {
+        'label':'first point value is zero',
+        'description':'The first value of each data set is zero.',
+        'data' :pd.read_csv(DATA_PATH.joinpath("firstPointZero.csv")),
+    },
+    'feature':pd.read_csv(DATA_PATH.joinpath("features.csv")),
+    'statistics':pd.read_csv(DATA_PATH.joinpath("statistics.csv"))
+}
+
+kMeans_dict={
+    "lerp": {
+        'inertia':{
+            'label':'cluster inertia',
+            'data': {
+                'x':pd.read_csv(KMEANS_PATH.joinpath("lerp/inertia/X.csv")),
+                'y':pd.read_csv(KMEANS_PATH.joinpath("lerp/inertia/Y.csv")),
+                'xy':pd.read_csv(KMEANS_PATH.joinpath("lerp/inertia/XY.csv"))
+            },
+        },
+        'predict':{
+            'label':'predict cluster number',
+            'data': {
+                'x':pd.read_csv(KMEANS_PATH.joinpath("lerp/predict/X.csv")),
+                'y':pd.read_csv(KMEANS_PATH.joinpath("lerp/predict/Y.csv")),
+                'xy':pd.read_csv(KMEANS_PATH.joinpath("lerp/predict/XY.csv"))
+            }
+        }
+    },
+    "meanZero": {
+        'inertia':{
+            'label':'cluster inertia',
+            'data': {
+                'x':pd.read_csv(KMEANS_PATH.joinpath("meanZero/inertia/X.csv")),
+                'y':pd.read_csv(KMEANS_PATH.joinpath("meanZero/inertia/Y.csv")),
+                'xy':pd.read_csv(KMEANS_PATH.joinpath("meanZero/inertia/XY.csv"))
+            },
+        },
+        'predict':{
+            'label':'predict cluster number',
+            'data': {
+                'x':pd.read_csv(KMEANS_PATH.joinpath("meanZero/predict/X.csv")),
+                'y':pd.read_csv(KMEANS_PATH.joinpath("meanZero/predict/Y.csv")),
+                'xy':pd.read_csv(KMEANS_PATH.joinpath("meanZero/predict/XY.csv"))
+            }
+        }
+    },
+    "medianZero": {
+        'inertia':{
+            'label':'cluster inertia',
+            'data': {
+                'x':pd.read_csv(KMEANS_PATH.joinpath("medianZero/inertia/X.csv")),
+                'y':pd.read_csv(KMEANS_PATH.joinpath("medianZero/inertia/Y.csv")),
+                'xy':pd.read_csv(KMEANS_PATH.joinpath("medianZero/inertia/XY.csv"))
+            },
+        },
+        'predict':{
+            'label':'predict cluster number',
+            'data': {
+                'x':pd.read_csv(KMEANS_PATH.joinpath("medianZero/predict/X.csv")),
+                'y':pd.read_csv(KMEANS_PATH.joinpath("medianZero/predict/Y.csv")),
+                'xy':pd.read_csv(KMEANS_PATH.joinpath("medianZero/predict/XY.csv"))
+            }
+        }
+    },
+    "firstPointZero": {
+        'inertia':{
+            'label':'cluster inertia',
+            'data': {
+                'x':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero/inertia/X.csv")),
+                'y':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero/inertia/Y.csv")),
+                'xy':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero/inertia/XY.csv"))
+            },
+        },
+        'predict':{
+            'label':'predict cluster number',
+            'data': {
+                'x':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero/predict/X.csv")),
+                'y':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero/predict/Y.csv")),
+                'xy':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero/predict/XY.csv"))
+            }
+        }
+    }
+}
+feature_unique={
+    "id":input_data["feature"]['id_user'].unique(),
+    "week":input_data["feature"]['week'].unique(),
+    "eye_state":input_data["feature"]['eye_state'].unique(),
+}
 #feature setting
 feature_dict={
-    "feature":{
-        'label':'data feature',
-        'data':pd.read_csv(DATA_PATH.joinpath("features.csv"))
+    "id":{
+        'label':'select ids',
+        'options':[{
+            'label': key,
+            'value': key
+        } for key in feature_unique['id']],
     },
-    'statistics':{
-        'label':'data statistics',
-        'data':pd.read_csv(DATA_PATH.joinpath("statistics.csv"))
+    "week":{
+        'label':'select weekdays',
+        'options':[{
+            'label': key,
+            'value': key
+        } for key in feature_unique['week']],
+    },
+    "eye_state":{
+        'label':'select eye_states',
+        'options':[{
+            'label': key,
+            'value': key
+        } for key in feature_unique['eye_state']],
     }
 }
 
-#data setting
-data_dict = {
-    "lerp": {'label':'linear interporation',
-        'data':pd.read_csv(DATA_PATH.joinpath("lerp.csv"))
-    }
-}
-if(path_isfile(DATA_PATH.joinpath("meanZero.csv"))==True):
-    data_dict={
-        "meanZero": {
-            'label':'mean zero',
-            'data':pd.read_csv(DATA_PATH.joinpath("meanZero.csv"))
-        }
-    }
-if(path_isfile(DATA_PATH.joinpath("medianZero.csv"))==False):
-    data_dict={
-        "medianZero": {
-            'label':'median zero',
-            'data':pd.read_csv(DATA_PATH.joinpath("medianZero.csv"))
-        }
-    }
-if(path_isfile(DATA_PATH.joinpath("firstPointZero.csv"))==False):
-    data_dict={
-        "firstPointZero": {
-            'label':'first point zero',
-            'data':pd.read_csv(DATA_PATH.joinpath("firstPointZero.csv"))
-        }
-    }
-
-idSeries=feature_dict['feature']['data']['id_user']
-eye_stateSeries=feature_dict['feature']['data']['eye_state']
-weekSeries=feature_dict['feature']['data']['week']
-checklist_dict= {
-    'id_user':{
-        'data':idSeries,
-        'options':{'label':idSeries.unique(),'value':[np.where((idSeries==key), True,False) for key in idSeries.unique()]}
-    },
-    'eye_state':{
-        'data':eye_stateSeries,
-        'options':{'label':eye_stateSeries.unique(),'value':[np.where((eye_stateSeries==key), True,False) for key in eye_stateSeries.unique()]}
-    },
-    'week':{
-        'data':weekSeries,
-        'options':{'label':weekSeries.unique(),'value':[np.where((weekSeries==key), True,False) for key in weekSeries.unique()]}
-    }
-}
-if(path_isdir(DATA_PATH.joinpath('kMeans'))==True):
-    kmeans_dict
-    
-
+id_io={f'{key}':val.values for key,val in zip(feature_unique['id'],[input_data["feature"]['id_user']==key for key in feature_unique['id'] ])}
+week_io={f'{key}':val.values for key,val in zip(feature_unique['week'],[input_data["feature"]['week']==key for key in feature_unique['week'] ])}
+eye_state_io={f'{key}':val.values for key,val in zip(feature_unique['eye_state'],[input_data["feature"]['eye_state']==key for key in feature_unique['eye_state'] ])}
 
 with open(PATH.joinpath("asset/demo_intro.md"), "r") as file:
     demo_intro_md = file.read()
@@ -135,7 +210,7 @@ def NamedSlider(name, short, min, max, step, val, marks=None):
         ],
     )
 
-def NamedChecklist(name, short, options, val):
+def NamedChecklist(name, short, options, vals):
     return html.Div(
         style={"margin": "25px 5px 30px 0px"},
         children=[
@@ -144,15 +219,15 @@ def NamedChecklist(name, short, options, val):
                 style={"margin-left": "5px"},
                 children=[
                     dcc.Checklist(
-                        id=f"checklist-{short}-All",
-                        options={'label':'All','value':'All'},
-                        value=val,
+                        id=f"checklist-{short}-all",
+                        options=[{'label':'all','value':'all'}],
+                        value=['all'],
                         labelStyle={'display': 'inline-block'}
                     ),
                     dcc.Checklist(
                         id=f"checklist-{short}",
                         options=options,
-                        value=val,
+                        value=vals,
                         labelStyle={'display': 'inline-block'}
                     )
                 ],
@@ -246,10 +321,10 @@ def add_layout(app):
                                         clearable=False,
                                         options=[
                                             {
-                                                "label": value['label'],
+                                                "label": key,
                                                 "value": key
                                             }
-                                            for key,value in data_dict.items()
+                                            for key in input_data.keys()
                                         ],
                                         placeholder="Select a dataset",
                                         value='lerp',
@@ -258,56 +333,30 @@ def add_layout(app):
                                         name="Number of Clusters",
                                         short="numberOfClusters",
                                         min=2,
-                                        max=20,
+                                        max=10,
                                         step=None,
                                         val=2,
                                         marks={
-                                            i: str(i) for i in [2, 3, 4, 5, 6, 10, 15, 20]
+                                            i: str(i) for i in range(2,10)
                                         },
                                     ),
-                                    options:=[{'label': 'New York City', 'value': 'NYC'},
-                                            {'label': 'Montréal', 'value': 'MTL'},
-                                            {'label': 'San Francisco', 'value': 'SF'}]
                                     NamedChecklist(
-                                        name="Initial PCA Dimensions",
-                                        options=options,
-                                        val=50,
-                                        marks={i: str(i) for i in [25, 50, 100]},
+                                        name="id_user",
+                                        short='id_user',
+                                        options=feature_dict["id"]['options'],
+                                        vals=feature_unique['id']
                                     ),
-                                    NamedSlider(
-                                        name="Learning Rate",
-                                        short="learning-rate",
-                                        min=10,
-                                        max=200,
-                                        step=None,
-                                        val=100,
-                                        marks={i: str(i) for i in [10, 50, 100, 200]},
+                                    NamedChecklist(
+                                        name="week",
+                                        short='week',
+                                        options=feature_dict["week"]['options'],
+                                        vals=feature_unique['week']
                                     ),
-                                    html.Div(
-                                        id="div-wordemb-controls",
-                                        style={"display": "none"},
-                                        children=[
-                                            NamedInlineRadioItems(
-                                                name="Display Mode",
-                                                short="wordemb-display-mode",
-                                                options=[
-                                                    {
-                                                        "label": " Regular",
-                                                        "value": "regular",
-                                                    },
-                                                    {
-                                                        "label": " Top-100 Neighbors",
-                                                        "value": "neighbors",
-                                                    },
-                                                ],
-                                                val="regular",
-                                            ),
-                                            dcc.Dropdown(
-                                                id="dropdown-word-selected",
-                                                placeholder="Select word to display its neighbors",
-                                                style={"background-color": "#f2f3f4"},
-                                            ),
-                                        ],
+                                    NamedChecklist(
+                                        name="eye_state",
+                                        short='eye_state',
+                                        options=feature_dict["eye_state"]['options'],
+                                        vals=feature_unique['eye_state']
                                     ),
                                 ]
                             )
@@ -335,7 +384,7 @@ def add_layout(app):
                                         },
                                     ),
                                     html.Div(id="div-plot-click-image"),
-                                    html.Div(id="div-plot-click-wordemb"),
+                                    #html.Div(id="div-plot-click-wordemb"),
                                 ],
                             )
                         ],
@@ -347,339 +396,4 @@ def add_layout(app):
 
 
 def add_callbacks(app):
-    def generate_figure_image(groups, layout):
-        
-        data = []
-
-        for idx, val in groups:
-            scatter = go.Scatter3d(
-                name=idx,
-                x=val["x"],
-                y=val["y"],
-                z=val["z"],
-                text=[idx for _ in range(val["x"].shape[0])],
-                textposition="top center",
-                mode="markers",
-                marker=dict(size=3, symbol="circle"),
-            )
-            data.append(scatter)
-
-        figure = go.Figure(data=data, layout=layout)
-
-        return figure
-
-    # Scatter Plot of the t-SNE datasets
-    def generate_figure_word_vec(
-        embedding_df, layout, wordemb_display_mode, selected_word, dataset
-    ):
-
-        try:
-            # Regular displays the full scatter plot with only circles
-            if wordemb_display_mode == "regular":
-                plot_mode = "markers"
-
-            # Nearest Neighbors displays only the 200 nearest neighbors of the selected_word, in text rather than circles
-            elif wordemb_display_mode == "neighbors":
-                if not selected_word:
-                    return go.Figure()
-
-                plot_mode = "text"
-
-                # Get the nearest neighbors indices using Euclidean distance
-                vector = data_dict[dataset].set_index("0")
-                selected_vec = vector.loc[selected_word]
-
-                def compare_pd(vector):
-                    return spatial_distance.euclidean(vector, selected_vec)
-
-                # vector.apply takes compare_pd function as the first argument
-                distance_map = vector.apply(compare_pd, axis=1)
-                neighbors_idx = distance_map.sort_values()[:100].index
-
-                # Select those neighbors from the embedding_df
-                embedding_df = embedding_df.loc[neighbors_idx]
-
-            scatter = go.Scatter3d(
-                name=str(embedding_df.index),
-                x=embedding_df["x"],
-                y=embedding_df["y"],
-                z=embedding_df["z"],
-                text=embedding_df.index,
-                textposition="middle center",
-                showlegend=False,
-                mode=plot_mode,
-                marker=dict(size=3, color="#3266c1", symbol="circle"),
-            )
-
-            figure = go.Figure(data=[scatter], layout=layout)
-
-            return figure
-        except KeyError as error:
-            print(error)
-            raise PreventUpdate
-
-    # Callback function for the learn-more button
-    @app.callback(
-        [
-            Output("description-text", "children"),
-            Output("learn-more-button", "children"),
-        ],
-        [Input("learn-more-button", "n_clicks")],
-    )
-    def learn_more(n_clicks):
-        # If clicked odd times, the instructions will show; else (even times), only the header will show
-        if n_clicks is None:
-            n_clicks = 0
-        if (n_clicks % 2) == 1:
-            n_clicks += 1
-            return (
-                html.Div(
-                    style={"padding-right": "15%"},
-                    children=[dcc.Markdown(demo_description_md)],
-                ),
-                "Close",
-            )
-        else:
-            n_clicks += 1
-            return (
-                html.Div(
-                    style={"padding-right": "15%"},
-                    children=[dcc.Markdown(demo_intro_md)],
-                ),
-                "Learn More",
-            )
-
-    @app.callback(
-        Output("div-wordemb-controls", "style"), [Input("dropdown-dataset", "value")]
-    )
-    def show_wordemb_controls(dataset):
-        if dataset in WORD_EMBEDDINGS:
-            return None
-        else:
-            return {"display": "none"}
-
-    @app.callback(
-        Output("dropdown-word-selected", "disabled"),
-        [Input("radio-wordemb-display-mode", "value")],
-    )
-    def disable_word_selection(mode):
-        return not mode == "neighbors"
-
-    @app.callback(
-        Output("dropdown-word-selected", "options"),
-        [Input("dropdown-dataset", "value")],
-    )
-    def fill_dropdown_word_selection_options(dataset):
-        if dataset in WORD_EMBEDDINGS:
-            return [
-                {"label": i, "value": i} for i in data_dict[dataset].iloc[:, 0].tolist()
-            ]
-        else:
-            return []
-
-    @app.callback(
-        Output("graph-3d-plot", "figure"),
-        [
-            Input("dropdown-dataset", "value"),
-            Input("slider-NumberOfClusters", "value"),
-            Input("slider-perplexity", "value"),
-            Input("slider-pca-dimension", "value"),
-            Input("slider-learning-rate", "value"),
-            Input("dropdown-word-selected", "value"),
-            Input("radio-wordemb-display-mode", "value"),
-        ],
-    )
-    def display_3d_scatter_plot(
-        dataset,
-        NumberOfClusters,
-        perplexity,
-        pca_dim,
-        learning_rate,
-        selected_word,
-        wordemb_display_mode,
-    ):
-        if dataset:
-            path = f"demo_embeddings/{dataset}/NumberOfClusters_{NumberOfClusters}/perplexity_{perplexity}/pca_{pca_dim}/learning_rate_{learning_rate}"
-
-            try:
-
-                data_url = [
-                    "demo_embeddings",
-                    str(dataset),
-                    "NumberOfClusters_" + str(NumberOfClusters),
-                    "perplexity_" + str(perplexity),
-                    "pca_" + str(pca_dim),
-                    "learning_rate_" + str(learning_rate),
-                    "data.csv",
-                ]
-                full_path = PATH.joinpath(*data_url)
-                embedding_df = pd.read_csv(
-                    full_path, index_col=0, encoding="ISO-8859-1"
-                )
-
-            except FileNotFoundError as error:
-                print(
-                    error,
-                    "\nThe dataset was not found. Please generate it using generate_demo_embeddings.py",
-                )
-                return go.Figure()
-
-            # Plot layout
-            axes = dict(title="", showgrid=True, zeroline=False, showticklabels=False)
-
-            layout = go.Layout(
-                margin=dict(l=0, r=0, b=0, t=0),
-                scene=dict(xaxis=axes, yaxis=axes, zaxis=axes),
-            )
-
-            # For Image datasets
-            if dataset in IMAGE_DATASETS:
-                embedding_df["label"] = embedding_df.index
-
-                groups = embedding_df.groupby("label")
-                figure = generate_figure_image(groups, layout)
-
-            # Everything else is word embeddings
-            elif dataset in WORD_EMBEDDINGS:
-                figure = generate_figure_word_vec(
-                    embedding_df=embedding_df,
-                    layout=layout,
-                    wordemb_display_mode=wordemb_display_mode,
-                    selected_word=selected_word,
-                    dataset=dataset,
-                )
-
-            else:
-                figure = go.Figure()
-
-            return figure
-
-    @app.callback(
-        Output("div-plot-click-image", "children"),
-        [
-            Input("graph-3d-plot", "clickData"),
-            Input("dropdown-dataset", "value"),
-            Input("slider-NumberOfClusters", "value"),
-            Input("slider-perplexity", "value"),
-            Input("slider-pca-dimension", "value"),
-            Input("slider-learning-rate", "value"),
-        ],
-    )
-    def display_click_image(
-        clickData, dataset, NumberOfClusters, perplexity, pca_dim, learning_rate
-    ):
-        if dataset in IMAGE_DATASETS and clickData:
-            # Load the same dataset as the one displayed
-
-            try:
-                data_url = [
-                    "demo_embeddings",
-                    str(dataset),
-                    "NumberOfClusters_" + str(NumberOfClusters),
-                    "perplexity_" + str(perplexity),
-                    "pca_" + str(pca_dim),
-                    "learning_rate_" + str(learning_rate),
-                    "data.csv",
-                ]
-
-                full_path = PATH.joinpath(*data_url)
-                embedding_df = pd.read_csv(full_path, encoding="ISO-8859-1")
-
-            except FileNotFoundError as error:
-                print(
-                    error,
-                    "\nThe dataset was not found. Please generate it using generate_demo_embeddings.py",
-                )
-                return
-
-            # Convert the point clicked into float64 numpy array
-            click_point_np = np.array(
-                [clickData["points"][0][i] for i in ["x", "y", "z"]]
-            ).astype(np.float64)
-            # Create a boolean mask of the point clicked, truth value exists at only one row
-            bool_mask_click = (
-                embedding_df.loc[:, "x":"z"].eq(click_point_np).all(axis=1)
-            )
-            # Retrieve the index of the point clicked, given it is present in the set
-            if bool_mask_click.any():
-                clicked_idx = embedding_df[bool_mask_click].index[0]
-
-                # Retrieve the image corresponding to the index
-                image_vector = data_dict[dataset].iloc[clicked_idx]
-                if dataset == "cifar_gray_3000":
-                    image_np = image_vector.values.reshape(32, 32).astype(np.float64)
-                else:
-                    image_np = image_vector.values.reshape(28, 28).astype(np.float64)
-
-                # Encode image into base 64
-                image_b64 = numpy_to_b64(image_np)
-
-                return html.Img(
-                    src="data:image/png;base64, " + image_b64,
-                    style={"height": "25vh", "display": "block", "margin": "auto"},
-                )
-        return None
-
-    @app.callback(
-        Output("div-plot-click-wordemb", "children"),
-        [Input("graph-3d-plot", "clickData"), Input("dropdown-dataset", "value")],
-    )
-    def display_click_word_neighbors(clickData, dataset):
-        if dataset in WORD_EMBEDDINGS and clickData:
-            selected_word = clickData["points"][0]["text"]
-
-            try:
-                # Get the nearest neighbors indices using Euclidean distance
-                vector = data_dict[dataset].set_index("0")
-                selected_vec = vector.loc[selected_word]
-
-                def compare_pd(vector):
-                    return spatial_distance.euclidean(vector, selected_vec)
-
-                # vector.apply takes compare_pd function as the first argument
-                distance_map = vector.apply(compare_pd, axis=1)
-                nearest_neighbors = distance_map.sort_values()[1:6]
-
-                trace = go.Bar(
-                    x=nearest_neighbors.values,
-                    y=nearest_neighbors.index,
-                    width=0.5,
-                    orientation="h",
-                    marker=dict(color="rgb(50, 102, 193)"),
-                )
-
-                layout = go.Layout(
-                    title=f'5 nearest neighbors of "{selected_word}"',
-                    xaxis=dict(title="Euclidean Distance"),
-                    margin=go.layout.Margin(l=60, r=60, t=35, b=35),
-                )
-
-                fig = go.Figure(data=[trace], layout=layout)
-
-                return dcc.Graph(
-                    id="graph-bar-nearest-neighbors-word",
-                    figure=fig,
-                    style={"height": "25vh"},
-                    config={"displayModeBar": False},
-                )
-            except KeyError as error:
-                raise PreventUpdate
-        return None
-
-    @app.callback(
-        Output("div-plot-click-message", "children"),
-        [Input("graph-3d-plot", "clickData"), Input("dropdown-dataset", "value")],
-    )
-    def display_click_message(clickData, dataset):
-        # Displays message shown when a point in the graph is clicked, depending whether it's an image or word
-        if dataset in IMAGE_DATASETS:
-            if clickData:
-                return "Image Selected"
-            else:
-                return "Click a data point on the scatter plot to display its corresponding image."
-
-        elif dataset in WORD_EMBEDDINGS:
-            if clickData:
-                return None
-            else:
-                return "Click a word on the plot to see its top 5 neighbors."
+    return app
