@@ -8,158 +8,22 @@ import numpy as np
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+from dash.dependencies import Input, Output, State
+""" import dash
 from PIL import Image
 from io import BytesIO
-from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
-from numpy.lib.arraysetops import unique
-
-import pandas as pd
-import plotly.graph_objs as go
-import scipy.spatial.distance as spatial_distance
-
-import layoutplt
+ """
+from dataRead import readData
+input_data,input_features,feature_unique,figure_dict,feature_dict,id_io,week_io,eye_state_io,kMeans_dict=readData()
 
 # get relative data folder
 PATH = pathlib.Path(__file__).parent
-DATA_PATH = PATH.joinpath("asset/data").resolve()
-KMEANS_PATH = PATH.joinpath("asset/data/kMeans").resolve()
 
 path_isfile=os.path.isfile
 path_isdir=os.path.isdir
 
-input_data={
-    'lerp':{
-        'label':'linear interporation',
-        'descriotion':'Linear interpolation of missing data for each data.',
-        'data' :pd.read_csv(DATA_PATH.joinpath("lerp.csv")),
-    },
-    "meanZero": {
-        'label':'mean zero',
-        'description':'The average value of each data is zero.',
-        'data' :pd.read_csv(DATA_PATH.joinpath("meanZero.csv")),
-    },
-    "medianZero": {
-        'label':'median zero',
-        'description':'The median of each data set is zero.',
-        'data' :pd.read_csv(DATA_PATH.joinpath("medianZero.csv")),
-    },
-    "firstPointZero": {
-        'label':'first point value is zero',
-        'description':'The first value of each data set is zero.',
-        'data' :pd.read_csv(DATA_PATH.joinpath("firstPointZero.csv")),
-    },
-    'feature':pd.read_csv(DATA_PATH.joinpath("features.csv")),
-    'statistics':pd.read_csv(DATA_PATH.joinpath("statistics.csv"))
-}
 
-kMeans_dict={
-    "lerp": {
-        'inertia':{
-            'label':'cluster inertia',
-            'data': {
-                'x':pd.read_csv(KMEANS_PATH.joinpath("lerp/inertia/X.csv")),
-                'y':pd.read_csv(KMEANS_PATH.joinpath("lerp/inertia/Y.csv")),
-                'xy':pd.read_csv(KMEANS_PATH.joinpath("lerp/inertia/XY.csv"))
-            },
-        },
-        'predict':{
-            'label':'predict cluster number',
-            'data': {
-                'x':pd.read_csv(KMEANS_PATH.joinpath("lerp/predict/X.csv")),
-                'y':pd.read_csv(KMEANS_PATH.joinpath("lerp/predict/Y.csv")),
-                'xy':pd.read_csv(KMEANS_PATH.joinpath("lerp/predict/XY.csv"))
-            }
-        }
-    },
-    "meanZero": {
-        'inertia':{
-            'label':'cluster inertia',
-            'data': {
-                'x':pd.read_csv(KMEANS_PATH.joinpath("meanZero/inertia/X.csv")),
-                'y':pd.read_csv(KMEANS_PATH.joinpath("meanZero/inertia/Y.csv")),
-                'xy':pd.read_csv(KMEANS_PATH.joinpath("meanZero/inertia/XY.csv"))
-            },
-        },
-        'predict':{
-            'label':'predict cluster number',
-            'data': {
-                'x':pd.read_csv(KMEANS_PATH.joinpath("meanZero/predict/X.csv")),
-                'y':pd.read_csv(KMEANS_PATH.joinpath("meanZero/predict/Y.csv")),
-                'xy':pd.read_csv(KMEANS_PATH.joinpath("meanZero/predict/XY.csv"))
-            }
-        }
-    },
-    "medianZero": {
-        'inertia':{
-            'label':'cluster inertia',
-            'data': {
-                'x':pd.read_csv(KMEANS_PATH.joinpath("medianZero/inertia/X.csv")),
-                'y':pd.read_csv(KMEANS_PATH.joinpath("medianZero/inertia/Y.csv")),
-                'xy':pd.read_csv(KMEANS_PATH.joinpath("medianZero/inertia/XY.csv"))
-            },
-        },
-        'predict':{
-            'label':'predict cluster number',
-            'data': {
-                'x':pd.read_csv(KMEANS_PATH.joinpath("medianZero/predict/X.csv")),
-                'y':pd.read_csv(KMEANS_PATH.joinpath("medianZero/predict/Y.csv")),
-                'xy':pd.read_csv(KMEANS_PATH.joinpath("medianZero/predict/XY.csv"))
-            }
-        }
-    },
-    "firstPointZero": {
-        'inertia':{
-            'label':'cluster inertia',
-            'data': {
-                'x':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero/inertia/X.csv")),
-                'y':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero/inertia/Y.csv")),
-                'xy':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero/inertia/XY.csv"))
-            },
-        },
-        'predict':{
-            'label':'predict cluster number',
-            'data': {
-                'x':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero/predict/X.csv")),
-                'y':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero/predict/Y.csv")),
-                'xy':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero/predict/XY.csv"))
-            }
-        }
-    }
-}
-feature_unique={
-    "id":input_data["feature"]['id_user'].unique(),
-    "week":input_data["feature"]['week'].unique(),
-    "eye_state":input_data["feature"]['eye_state'].unique(),
-}
-#feature setting
-feature_dict={
-    "id":{
-        'label':'select ids',
-        'options':[{
-            'label': key,
-            'value': key
-        } for key in feature_unique['id']],
-    },
-    "week":{
-        'label':'select weekdays',
-        'options':[{
-            'label': key,
-            'value': key
-        } for key in feature_unique['week']],
-    },
-    "eye_state":{
-        'label':'select eye_states',
-        'options':[{
-            'label': key,
-            'value': key
-        } for key in feature_unique['eye_state']],
-    }
-}
-
-id_io={f'{key}':val.values for key,val in zip(feature_unique['id'],[input_data["feature"]['id_user']==key for key in feature_unique['id'] ])}
-week_io={f'{key}':val.values for key,val in zip(feature_unique['week'],[input_data["feature"]['week']==key for key in feature_unique['week'] ])}
-eye_state_io={f'{key}':val.values for key,val in zip(feature_unique['eye_state'],[input_data["feature"]['eye_state']==key for key in feature_unique['eye_state'] ])}
 
 with open(PATH.joinpath("asset/demo_intro.md"), "r") as file:
     demo_intro_md = file.read()
@@ -220,14 +84,14 @@ def NamedChecklist(name, short, options, vals):
                 children=[
                     dcc.Checklist(
                         id=f"checklist-{short}-all",
-                        options=[{'label':'all','value':'all'}],
-                        value=['all'],
+                        options=[{'label':'All','value':'All'}],
+                        value=[],
                         labelStyle={'display': 'inline-block'}
                     ),
                     dcc.Checklist(
                         id=f"checklist-{short}",
                         options=options,
-                        value=vals,
+                        value=[],
                         labelStyle={'display': 'inline-block'}
                     )
                 ],
@@ -327,7 +191,7 @@ def add_layout(app):
                                             for key in input_data.keys()
                                         ],
                                         placeholder="Select a dataset",
-                                        value='lerp',
+                                        value=[],
                                     ),
                                     NamedSlider(
                                         name="Number of Clusters",
@@ -394,6 +258,105 @@ def add_layout(app):
         ],
     )
 
-
 def add_callbacks(app):
-    return app
+    @app.callback(
+        [
+            Output("checklist-id_user-all", "value"),
+            Output("checklist-id_user", "value")
+        ],
+        [
+            Input("checklist-id_user-all", "value"),
+            Input("checklist-id_user", "value"),
+            State("checklist-id_user", "options")
+        ]
+    )
+    def sync_checklists_id(all_selected,selected,options):
+        values=[option["value"] for option in options]
+        ctx = dash.callback_context
+        input_id = ctx.triggered[0]["prop_id"].split(".")[0]
+        if input_id == "checklist-id_user-all":
+            through=all_selected
+            if (all_selected == ["All"]):
+                selected = values
+            else:
+                selected = []
+            return [through, selected]
+
+        elif input_id == "checklist-id_user":
+            through=selected
+            if (set(selected) == set(values)):
+                all_selected = ["All"]
+            else:
+                all_selected = []
+
+            return [all_selected, through]
+        else:
+            pass
+    
+    @app.callback(
+        [
+            Output("checklist-week-all", "value"),
+            Output("checklist-week", "value")
+        ],
+        [
+            Input("checklist-week-all", "value"),
+            Input("checklist-week", "value"),
+            State("checklist-week", "options")
+        ]
+    )
+    def sync_checklists_week(all_selected,selected,options):
+        values=[option["value"] for option in options]
+        ctx = dash.callback_context
+        input_id = ctx.triggered[0]["prop_id"].split(".")[0]
+        if input_id == "checklist-week-all":
+            through=all_selected
+            if (all_selected == ["All"]):
+                selected = values
+            else:
+                selected = []
+            return [through, selected]
+
+        elif input_id == "checklist-week":
+            through=selected
+            if (set(selected) == set(values)):
+                all_selected = ["All"]
+            else:
+                all_selected = []
+
+            return [all_selected, through]
+        else:
+            pass
+  
+    @app.callback(
+        [
+            Output("checklist-eye_state-all", "value"),
+            Output("checklist-eye_state", "value")
+        ],
+        [
+            Input("checklist-eye_state-all", "value"),
+            Input("checklist-eye_state", "value"),
+            State("checklist-eye_state", "options")
+        ]
+    )
+    def sync_checklists_eye_state(all_selected,selected,options):
+        values=[option["value"] for option in options]
+        ctx = dash.callback_context
+        input_id = ctx.triggered[0]["prop_id"].split(".")[0]
+        if input_id == "checklist-eye_state-all":
+            through=all_selected
+            if (all_selected == ["All"]):
+                selected = values
+            else:
+                selected = []
+            return [through, selected]
+
+        elif input_id == "checklist-eye_state":
+            through=selected
+            if (set(selected) == set(values)):
+                all_selected = ["All"]
+            else:
+                all_selected = []
+
+            return [all_selected, through]
+        else:
+            pass

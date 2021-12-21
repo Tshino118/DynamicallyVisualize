@@ -13,8 +13,8 @@ app = dash.Dash(
 )
 app.title = "t-SNE Explorer"
 
+print('add app-callback')
 server = app.server
-
 app.layout = add_layout(app)
 add_callbacks(app)
 
@@ -24,5 +24,4 @@ add_callbacks(app)
 
 # Running server
 if __name__ == "__main__":
-    app.run_server(debug=True)
-
+    app.run_server(debug=False)
