@@ -35,9 +35,10 @@ def Fig_xy(x,y,traceName):
 '''example
 figure_dict={
     'lerp':{
-        "timeX":timeX,
-        "timeY":timeY,
-        "XY":
+        "timeX":{'index':Fig_xy(x=time,y=data_x,traceName=index),},
+        "timeY":{'index':Fig_xy(x=time,y=data_y,traceName=index),},
+        "XY":{'index':Fig_xy(x=data_x,y=data_y,traceName=index),},
+        "timeXY":{'index':Fig_xyz(x=data_x,y=data_y,z=time,traceName=index),}
     },
 }
 '''
@@ -56,10 +57,10 @@ def make_figure(input_data):
             time=[round(i*0.01,3) for i in range(start,lengthHarf+(start*100))]
             data_x=data[0:lengthHarf]
             data_y=data[lengthHarf+1:length]
-            timeX.update({f'{dataType}_{index}':Fig_xy(x=time,y=data_x,traceName=index)})
-            timeY.update({f'{dataType}_{index}':Fig_xy(x=time,y=data_y,traceName=index)})
-            XY.update({f'{dataType}_{index}':Fig_xy(x=data_x,y=data_y,traceName=index)})
-            timeXY.update({f'{dataType}_{index}':Fig_xyz(x=data_x,y=data_y,z=time,traceName=index)})
+            timeX.update({f'{index}':Fig_xy(x=time,y=data_x,traceName=index)})
+            timeY.update({f'{index}':Fig_xy(x=time,y=data_y,traceName=index)})
+            XY.update({f'{index}':Fig_xy(x=data_x,y=data_y,traceName=index)})
+            timeXY.update({f'{index}':Fig_xyz(x=data_x,y=data_y,z=time,traceName=index)})
         figure_dict.update({
             f'{dataType}':{
                 "timeX":timeX,

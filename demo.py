@@ -5,17 +5,15 @@ import pathlib
 import os
 
 import numpy as np
-import dash
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output, State
-""" import dash
+#from dash.dependencies import Input, Output, State
+""" 
 from PIL import Image
 from io import BytesIO
 from dash.exceptions import PreventUpdate
- """
+"""
 from dataRead import readData
-input_data,input_features,feature_unique,figure_dict,feature_dict,id_io,week_io,eye_state_io,kMeans_dict=readData()
 
 # get relative data folder
 PATH = pathlib.Path(__file__).parent
@@ -23,13 +21,33 @@ PATH = pathlib.Path(__file__).parent
 path_isfile=os.path.isfile
 path_isdir=os.path.isdir
 
+ids={
+    "app-header":["plotly-image","app-title"],
+    "demo-explanation":["description-text","learn-more-button"],
+    "app-body":{
+        "setting":[
+            "dropdown-dataset",
+            "checklist-id_user-all",
+            "checklist-id_user",
+            "checklist-week-all",
+            "checklist-week",
+            "checklist-eye_state-all",
+            "checklist-eye_state",
+            "slider-numberOfClusters"
+        ],
+        "main-graph":[
+            "select-data",
+            "graph-3d-plot"
+        ],
+        "plot-click":[
+            "div-plot-click-message",
+            "div-plot-click-image"
+        ]
+
+    }
+}
 
 
-with open(PATH.joinpath("asset/demo_intro.md"), "r") as file:
-    demo_intro_md = file.read()
-
-with open(PATH.joinpath("asset/demo_description.md"), "r") as file:
-    demo_description_md = file.read()
 '''
 def numpy_to_b64(array, scalar=True):
     # Convert from 0-1 to 0-255
@@ -74,7 +92,7 @@ def NamedSlider(name, short, min, max, step, val, marks=None):
         ],
     )
 
-def NamedChecklist(name, short, options, vals):
+def NamedChecklist(name, short, options):
     return html.Div(
         style={"margin": "25px 5px 30px 0px"},
         children=[
@@ -115,7 +133,7 @@ def NamedInlineRadioItems(name, short, options, val, **kwargs):
         ],
     )
 
-def Header(app):
+def Header():
     # Header
     return html.Div(
                 className="row header",
@@ -125,7 +143,7 @@ def Header(app):
                     html.Div(
                         [
                             html.Img(
-                                src=app.get_asset_url("dash-logo.png"),
+                                src='./asset/dash-logo.png',
                                 className="logo",
                                 id="plotly-image",
                             )
@@ -145,7 +163,7 @@ def Header(app):
                 ],
             )
 
-def description(intro_md):
+def description():
     #  Demo Description
     return html.Div(
             className="row background",
@@ -153,7 +171,7 @@ def description(intro_md):
             style={"padding": "50px 45px"},
             children=[
                 html.Div(
-                    id="description-text", children=dcc.Markdown(intro_md)
+                    id="description-text", children=dcc.Markdown()
                 ),
                 html.Div(
                     html.Button(id="learn-more-button", children=["Learn More"])
@@ -161,202 +179,147 @@ def description(intro_md):
             ],
         )
 
+def Body():
+    inputDataLabel=['lerp',"meanZero","medianZero","firstPointZero"]
+    data=readData(
+        input_data=True,
+        input_features=True, 
+        feature_unique=True, 
+        figure_dict=True, 
+        feature_dict=True, 
+        io_dict=True, 
+        kMeans_dict=True
+    )
+    return html.Div(
+        className="row background",
+        id="app-body",
+        style={"padding": "10px"},
+        children=[
+            html.Div(
+                className="three columns",
+                id="setting",
+                children=[
+                    Card([
+                        dcc.Dropdown(
+                            id="dropdown-dataset",
+                            searchable=False,
+                            clearable=False,
+                            options=[
+                                {
+                                    "label": key,
+                                    "value": key
+                                }
+                                for key in [inputDataLabel]
+                            ],
+                            placeholder="Select a dataset",
+                            value=[],
+                        ),
+                        NamedChecklist(
+                            #id="checklist-id_user-all"
+                            #id="checklist-id_user"
+                            name="id_user",
+                            short='id_user',
+                            options=data["feature_dict"]["id"]['options'],
+                        ),
+                        NamedChecklist(
+                            #id="checklist-week-all"
+                            #id="checklist-week"
+                            name="week",
+                            short='week',
+                            options=data["feature_dict"]["week"]['options'],
+                        ),
+                        NamedChecklist(
+                            #id="checklist-eye_state-all"
+                            #id="checklist-eye_state"
+                            name="eye_state",
+                            short='eye_state',
+                            options=data["feature_dict"]["eye_state"]['options'],
+                        ),
+                        NamedSlider(
+                            #id="slider-numberOfClusters"
+                            name="Number of Clusters",
+                            short="numberOfClusters",
+                            min=2,
+                            max=10,
+                            step=None,
+                            val=2,
+                            marks={
+                                i: str(i) for i in range(2,10)
+                            },
+                        ),
+                        html.Button(
+                            children="submit",
+                            id="submit-val",
+                            n_clicks=0
+                        )
+                    ]),
+                ],
+            
+            ),
+            html.Div(
+                className="six columns",
+                id="main-graph",
+                children=[
+                    dcc.Store(
+                        id="figure-store",
+                        storage_type="local",
+                        data=data["figure_dict"],
+                        clear_data=False
+                    ),
+                    dcc.Store(
+                        id="IO-store",
+                        storage_type="local",
+                        data=data["io_dict"],
+                        clear_data=False
+                    ),
+                    dcc.Store(
+                        id="kMeans-store",
+                        storage_type="local",
+                        data=data["kMeans_dict"],
+                        clear_data=False
+                    ),
+                    html.Label("Multi-Select Dropdown"),
+                    html.H1(id="select-data",children=["select data setting"]),
+                    html.Br(),
+                    dcc.Graph(id="graph-3d-plot", style={"height": "98vh"})
+                ],
+            ),
+            html.Div(
+                className="three columns",
+                id="plot-click",
+                children=[
+                    Card(
+                        style={"padding": "5px"},
+                        children=[
+                            html.Div(
+                                id="div-plot-click-message",
+                                style={
+                                    "text-align": "center",
+                                    "margin-bottom": "7px",
+                                    "font-weight": "bold",
+                                },
+                            ),
+                            html.Div(id="div-plot-click-image"),
+                            #html.Div(id="div-plot-click-wordemb"),
+                        ],
+                    )
+                ],
+            ),
+        ],
+    )
+
 def add_layout(app):
     # Actual layout of the app
     return html.Div(
         className="row",
         style={"max-width": "100%", "font-size": "1.5rem", "padding": "0px 0px"},
         children=[
-            Header(app),
-            description(intro_md=demo_intro_md),
+            # header
+            Header(),
+            # description
+            description(),
             # Body
-            html.Div(
-                className="row background",
-                style={"padding": "10px"},
-                children=[
-                    html.Div(
-                        className="three columns",
-                        children=[
-                            Card(
-                                [
-                                    dcc.Dropdown(
-                                        id="dropdown-dataset",
-                                        searchable=False,
-                                        clearable=False,
-                                        options=[
-                                            {
-                                                "label": key,
-                                                "value": key
-                                            }
-                                            for key in input_data.keys()
-                                        ],
-                                        placeholder="Select a dataset",
-                                        value=[],
-                                    ),
-                                    NamedSlider(
-                                        name="Number of Clusters",
-                                        short="numberOfClusters",
-                                        min=2,
-                                        max=10,
-                                        step=None,
-                                        val=2,
-                                        marks={
-                                            i: str(i) for i in range(2,10)
-                                        },
-                                    ),
-                                    NamedChecklist(
-                                        name="id_user",
-                                        short='id_user',
-                                        options=feature_dict["id"]['options'],
-                                        vals=feature_unique['id']
-                                    ),
-                                    NamedChecklist(
-                                        name="week",
-                                        short='week',
-                                        options=feature_dict["week"]['options'],
-                                        vals=feature_unique['week']
-                                    ),
-                                    NamedChecklist(
-                                        name="eye_state",
-                                        short='eye_state',
-                                        options=feature_dict["eye_state"]['options'],
-                                        vals=feature_unique['eye_state']
-                                    ),
-                                ]
-                            )
-                        ],
-                    ),
-                    html.Div(
-                        className="six columns",
-                        children=[
-                            dcc.Graph(id="graph-3d-plot", style={"height": "98vh"})
-                        ],
-                    ),
-                    html.Div(
-                        className="three columns",
-                        id="euclidean-distance",
-                        children=[
-                            Card(
-                                style={"padding": "5px"},
-                                children=[
-                                    html.Div(
-                                        id="div-plot-click-message",
-                                        style={
-                                            "text-align": "center",
-                                            "margin-bottom": "7px",
-                                            "font-weight": "bold",
-                                        },
-                                    ),
-                                    html.Div(id="div-plot-click-image"),
-                                    #html.Div(id="div-plot-click-wordemb"),
-                                ],
-                            )
-                        ],
-                    ),
-                ],
-            ),
+            Body()
         ],
     )
 
-def add_callbacks(app):
-    @app.callback(
-        [
-            Output("checklist-id_user-all", "value"),
-            Output("checklist-id_user", "value")
-        ],
-        [
-            Input("checklist-id_user-all", "value"),
-            Input("checklist-id_user", "value"),
-            State("checklist-id_user", "options")
-        ]
-    )
-    def sync_checklists_id(all_selected,selected,options):
-        values=[option["value"] for option in options]
-        ctx = dash.callback_context
-        input_id = ctx.triggered[0]["prop_id"].split(".")[0]
-        if input_id == "checklist-id_user-all":
-            through=all_selected
-            if (all_selected == ["All"]):
-                selected = values
-            else:
-                selected = []
-            return [through, selected]
-
-        elif input_id == "checklist-id_user":
-            through=selected
-            if (set(selected) == set(values)):
-                all_selected = ["All"]
-            else:
-                all_selected = []
-
-            return [all_selected, through]
-        else:
-            pass
-    
-    @app.callback(
-        [
-            Output("checklist-week-all", "value"),
-            Output("checklist-week", "value")
-        ],
-        [
-            Input("checklist-week-all", "value"),
-            Input("checklist-week", "value"),
-            State("checklist-week", "options")
-        ]
-    )
-    def sync_checklists_week(all_selected,selected,options):
-        values=[option["value"] for option in options]
-        ctx = dash.callback_context
-        input_id = ctx.triggered[0]["prop_id"].split(".")[0]
-        if input_id == "checklist-week-all":
-            through=all_selected
-            if (all_selected == ["All"]):
-                selected = values
-            else:
-                selected = []
-            return [through, selected]
-
-        elif input_id == "checklist-week":
-            through=selected
-            if (set(selected) == set(values)):
-                all_selected = ["All"]
-            else:
-                all_selected = []
-
-            return [all_selected, through]
-        else:
-            pass
-  
-    @app.callback(
-        [
-            Output("checklist-eye_state-all", "value"),
-            Output("checklist-eye_state", "value")
-        ],
-        [
-            Input("checklist-eye_state-all", "value"),
-            Input("checklist-eye_state", "value"),
-            State("checklist-eye_state", "options")
-        ]
-    )
-    def sync_checklists_eye_state(all_selected,selected,options):
-        values=[option["value"] for option in options]
-        ctx = dash.callback_context
-        input_id = ctx.triggered[0]["prop_id"].split(".")[0]
-        if input_id == "checklist-eye_state-all":
-            through=all_selected
-            if (all_selected == ["All"]):
-                selected = values
-            else:
-                selected = []
-            return [through, selected]
-
-        elif input_id == "checklist-eye_state":
-            through=selected
-            if (set(selected) == set(values)):
-                all_selected = ["All"]
-            else:
-                all_selected = []
-
-            return [all_selected, through]
-        else:
-            pass
