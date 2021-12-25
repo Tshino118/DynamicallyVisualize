@@ -14,7 +14,7 @@ class dataSets:
             'lerp':{
                 'label':'linear interporation',
                 'descriotion':'Linear interpolation of missing data for each data.',
-                'data' :pd.read_csv(DATA_PATH.joinpath("lerp.csv")),
+                'data' :pd.read_csv(DATA_PATH.joinpath("lerp.csv"),index_col=0),
             },
             "meanZero": {
                 'label':'mean zero',
@@ -30,9 +30,12 @@ class dataSets:
                 'label':'first point value is zero',
                 'description':'The first value of each data set is zero.',
                 'data' :pd.read_csv(DATA_PATH.joinpath("firstPointZero.csv")),
-            },
+            }
         }
     
+    def Input_indexes(input_data):
+        return input_data["lerp"]['data'].index
+
     def Input_features():
         print('read features')
         return {
@@ -179,13 +182,15 @@ class dataSets:
         }
 
 def readData(
-        input_data=False,input_features=False,feature_unique=False,figure_dict=False,feature_dict=False,
+        input_data=False,input_indexes=False,input_features=False,feature_unique=False,figure_dict=False,feature_dict=False,
         io_dict=False,kMeans_dict=False
     ):
     class_dataSets=dataSets
     #input_data,input_features,feature_unique,figure_dict,feature_dict,io_dict,kMeans_dict
     if input_data==True:
         input_data=class_dataSets.Input_data()
+        if input_indexes==True:
+            input_indexes=class_dataSets.Input_indexes(input_data)
         if figure_dict==True:
             figure_dict=class_dataSets.Figure_dict(input_data)
     if input_features==True:
@@ -200,6 +205,7 @@ def readData(
         kMeans_dict=class_dataSets.KMeans_dict()
     return {
         "input_data":input_data,
+        "input_indexes":input_indexes,
         "input_features":input_features,
         "feature_unique":feature_unique,
         "figure_dict":figure_dict,

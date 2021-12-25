@@ -13,7 +13,7 @@ from PIL import Image
 from io import BytesIO
 from dash.exceptions import PreventUpdate
 """
-from dataRead import readData
+import dataRead
 
 # get relative data folder
 PATH = pathlib.Path(__file__).parent
@@ -180,21 +180,56 @@ def description():
         )
 
 def Body():
+    dataClass=dataRead.dataSets
+    input_data=dataClass.Input_data()
+    input_features=dataClass.Input_features()
+    feature_unique=dataClass.Feature_unique(input_features)
+    feature_dict=dataClass.Feature_dict(feature_unique)
     inputDataLabel=['lerp',"meanZero","medianZero","firstPointZero"]
-    data=readData(
-        input_data=True,
-        input_features=True, 
-        feature_unique=True, 
-        figure_dict=True, 
-        feature_dict=True, 
-        io_dict=True, 
-        kMeans_dict=True
-    )
+
+    def Store():
+        return html.Div(
+            children=[
+            ]
+        )
+
     return html.Div(
         className="row background",
         id="app-body",
         style={"padding": "10px"},
         children=[
+            dcc.Store(
+                id='testStore',
+                storage_type="session",
+                data={"aaa":0},
+                clear_data=False
+            ),
+            #dcc.Store(
+            #    id="indexes-store",
+            #    storage_type="session",
+            #    data=dataClass.Input_indexes(input_data),
+            #    clear_data=False
+            #),
+
+            #dcc.Store(
+            #    id="figure-store",
+            #    storage_type="session",
+            #    data=dataClass.Figure_dict(input_data),
+            #    clear_data=False
+            #),
+            
+            #dcc.Store(
+            #    id="IO-store",
+            #    storage_type="session",
+            #    data=dataClass.IO_dict(feature_unique,input_features),
+            #    clear_data=False
+            #),
+            #dcc.Store(
+            #    id="kMeans-store",
+            #    storage_type="session",
+            #    data=dataClass.KMeans_dict(),
+            #    clear_data=False
+            #),
             html.Div(
                 className="three columns",
                 id="setting",
@@ -209,31 +244,31 @@ def Body():
                                     "label": key,
                                     "value": key
                                 }
-                                for key in [inputDataLabel]
+                                for key in inputDataLabel
                             ],
                             placeholder="Select a dataset",
-                            value=[],
+                            value='lerp',
                         ),
                         NamedChecklist(
                             #id="checklist-id_user-all"
                             #id="checklist-id_user"
                             name="id_user",
                             short='id_user',
-                            options=data["feature_dict"]["id"]['options'],
+                            options=feature_dict["id"]['options'],
                         ),
                         NamedChecklist(
                             #id="checklist-week-all"
                             #id="checklist-week"
                             name="week",
                             short='week',
-                            options=data["feature_dict"]["week"]['options'],
+                            options=feature_dict["week"]['options'],
                         ),
                         NamedChecklist(
                             #id="checklist-eye_state-all"
                             #id="checklist-eye_state"
                             name="eye_state",
                             short='eye_state',
-                            options=data["feature_dict"]["eye_state"]['options'],
+                            options=feature_dict["eye_state"]['options'],
                         ),
                         NamedSlider(
                             #id="slider-numberOfClusters"
@@ -253,34 +288,16 @@ def Body():
                             n_clicks=0
                         )
                     ]),
-                ],
-            
+                ],            
             ),
             html.Div(
                 className="six columns",
                 id="main-graph",
                 children=[
-                    dcc.Store(
-                        id="figure-store",
-                        storage_type="local",
-                        data=data["figure_dict"],
-                        clear_data=False
-                    ),
-                    dcc.Store(
-                        id="IO-store",
-                        storage_type="local",
-                        data=data["io_dict"],
-                        clear_data=False
-                    ),
-                    dcc.Store(
-                        id="kMeans-store",
-                        storage_type="local",
-                        data=data["kMeans_dict"],
-                        clear_data=False
-                    ),
                     html.Label("Multi-Select Dropdown"),
                     html.H1(id="select-data",children=["select data setting"]),
                     html.Br(),
+                    html.H1(id="select-graph",children=["select graph setting"]),
                     dcc.Graph(id="graph-3d-plot", style={"height": "98vh"})
                 ],
             ),
@@ -308,7 +325,7 @@ def Body():
         ],
     )
 
-def add_layout(app):
+def add_layout():
     # Actual layout of the app
     return html.Div(
         className="row",

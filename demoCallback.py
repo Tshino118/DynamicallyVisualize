@@ -1,11 +1,23 @@
 import dash
 from dash.dependencies import Input, Output, State
-
+import plotly.graph_objects as go
 import dash_core_components as dcc
 import dash_html_components as html
 import numpy as np
+import pandas as pd
+import dataRead
 import pathlib
 PATH = pathlib.Path(__file__).parent
+
+dataClass=dataRead.dataSets
+input_data=dataClass.Input_data()
+input_features=dataClass.Input_features()
+kMeans_dict=dataClass.KMeans_dict()
+input_indexes=dataClass.Input_indexes(input_data)
+figure_dict=dataClass.Figure_dict(input_data)
+feature_unique=dataClass.Feature_unique(input_features)
+feature_dict=dataClass.Feature_dict(feature_unique)
+io_dict=dataClass.IO_dict(feature_unique,input_features)
 
 with open(PATH.joinpath("asset/demo_intro.md"), "r") as file:
     demo_intro_md = file.read()
@@ -95,12 +107,13 @@ def add_callbacks(app):
             ]
         )
         def selectData(n_clicks,dataset,id_user,week,eye_state,numberOfClusters):
+            target_fig=figure_dict#{'index':Fig_xyz(),'index2':Fig_xyz(),...}
             return [
-                f"data set:{dataset}\
-                user:{id_user}\
-                weekdays:{week}\
-                eye state:{eye_state}\
-                Number of clusters:{numberOfClusters}"
+                f"data set:{dataset} type{type(dataset)}\
+                user:{id_user} type{type(id_user)}\
+                weekdays:{week} type{type(week)}\
+                eye state:{eye_state} type{type(eye_state)}\
+                Number of clusters:{numberOfClusters} type{type(numberOfClusters)}"
             ]
             
 
@@ -109,6 +122,7 @@ def add_callbacks(app):
         @app.callback(
             [
                 Output(f"graph-3d-plot", "figure"),
+                Output("select-graph", "children")
             ],
             [
                 Input("submit-val","n_clicks"),
@@ -117,36 +131,33 @@ def add_callbacks(app):
                 State("checklist-week", "value"),
                 State("checklist-eye_state", "value"),
                 State("slider-numberOfClusters", "value"),
-                State("figure-store", "data"),
-                State("IO-store", "data"),
-                State("kMeans-store","data")
             ]
         )
-        def graph3d(n_clicks,dataset,id_user,week,eye_state,numberOfClusters,figure_dict,io_dict,kMeans_dict):
-            id_user_io=[]
-            week_io=[]
-            eye_state_io=[]
+        def graph3d(n_clicks,dataset,id_user,week,eye_state,numberOfClusters):
+            id_user_io=pd.Series()
+            week_io=pd.Series()
+            eye_state_io=pd.Series()
             for val in id_user:
-                id_user_io+=io_dict["id"][val]
+                id_user_io+=pd.Series(io_dict["id"][val])
             for val in week:
-                week_io+=io_dict["week"][val]
+                week_io+=pd.Series(io_dict["week"][val])
             for val in eye_state:
-                eye_state_io+=io_dict["eye_state"][val]
+                eye_state_io+=pd.Series(io_dict["eye_state"][val])
             io_data=id_user_io+week_io+eye_state_io
-            id_data=np.array(io_data,dtype="bool")
-            kMeans_dict[dataset]["predict"]["data"]["xy"][numberOfClusters]
-            timeXY=figure_dict[dataset]["timeXY"]
-            figure=[]
+            io_data=io_data.astype('bool')
+            io_index=[index for index,io in zip(input_indexes,io_data) if io==True ]
 
-            return figure
-            
+            #clusterNumber=kMeans_dict[dataset]["predict"]["data"]["xy"].loc[numberOfClusters]
+            target_fig=figure_dict[dataset]["timeXY"]#{'index':Fig_xyz(),'index2':Fig_xyz(),...}
+            timeXY=[target_fig[index] for index in io_index]
+            figure=go.Figure(data=timeXY)
+            return [figure,f"dataset:{dataset} io_index:{io_index}\ntimeXY:{timeXY}"]
 
     #add clicked on graph-3d-plot callbacks
     def plotClick_callbacks():
         @app.callback(
             [
                 Output(f"div-plot-click-message", "value"),
-                Output(f"div-plot-click-image", "children")
             ],
             [
                 Input("graph-3d-plot", "clickData")
@@ -158,11 +169,9 @@ def add_callbacks(app):
     checklist_short=["id_user", "week", "eye_state"]
     [checklists_sync_callbacks(short) for short in checklist_short]
 
-    select_data_callback()
     learnMore_callbacks()
-    '''
-
     graph_callbacks()
-
+    select_data_callback()
+    '''
     plotClick_callbacks()
     '''

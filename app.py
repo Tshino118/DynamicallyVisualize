@@ -16,7 +16,7 @@ app.title = "Dynamically Visualize"
 
 print('add app-callback')
 server = app.server
-app.layout = add_layout(app)
+app.layout = add_layout()
 add_callbacks(app)
 
 # for the Local version
