@@ -157,16 +157,9 @@ def add_callbacks(app):
             num=len(graph_type)
             rows=math.ceil(math.sqrt(num))
             cols=math.ceil(num/int(rows))
-            specs=[[] for _ in rows]
-            cnt=0
-            for row in range(rows):
-                for col in range(cols):
-                    if (cnt<num):
-                        specs=graphTypeLabel[graph_type[cnt]]["specs"]
             figure = make_subplots(
-                rows=rows,cols=cols,
-                subplot_titles=[graphTypeLabel[type]["description"] for type in graph_type],
-                specs=specs
+                rows=rows,cols=cols,subplot_titles=[graphTypeLabel[type]["description"] for type in graph_type],
+                specs=[[graphTypeLabel[graph_type[col+row]]["specs"] for row in range(rows)] for col in range(cols)]
             )
             cnt=0
             for row in range(rows):
