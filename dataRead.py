@@ -182,11 +182,10 @@ class dataSets:
         }
 
 def readData(
-        input_data=False,input_indexes=False,input_features=False,feature_unique=False,figure_dict=False,feature_dict=False,
-        io_dict=False,kMeans_dict=False
+        input_data=False,input_indexes=False,input_features=False,feature_unique=False,figure_dict=False,feature_dict=False,kMeans_dict=False
     ):
     class_dataSets=dataSets
-    #input_data,input_features,feature_unique,figure_dict,feature_dict,io_dict,kMeans_dict
+    #input_data,input_features,feature_unique,figure_dict,feature_dict,kMeans_dict
     if input_data==True:
         input_data=class_dataSets.Input_data()
         if input_indexes==True:
@@ -199,8 +198,7 @@ def readData(
             feature_unique=class_dataSets.Feature_unique(input_features)
             if feature_dict==True:
                 feature_dict=class_dataSets.Feature_dict(feature_unique)
-            if io_dict==True:
-                io_dict=class_dataSets.IO_dict(feature_unique,input_features)
+
     if kMeans_dict==True:
         kMeans_dict=class_dataSets.KMeans_dict()
     return {
@@ -210,7 +208,6 @@ def readData(
         "feature_unique":feature_unique,
         "figure_dict":figure_dict,
         "feature_dict":feature_dict,
-        "io_dict":io_dict,
         "kMeans_dict":kMeans_dict
     }
 

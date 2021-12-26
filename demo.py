@@ -103,7 +103,7 @@ def NamedChecklist(name, short, options):
                     dcc.Checklist(
                         id=f"checklist-{short}-all",
                         options=[{'label':'All','value':'All'}],
-                        value=[],
+                        value=['All'],
                         labelStyle={'display': 'inline-block'}
                     ),
                     dcc.Checklist(
@@ -282,6 +282,20 @@ def Body():
                                 i: str(i) for i in range(2,10)
                             },
                         ),
+                        dcc.Dropdown(
+                            id="dropdown-graph-type",
+                            searchable=False,
+                            clearable=False,
+                            options=[
+                                {"label": 'CoPx-CoPy-time',"value": "timeXY"},
+                                {"label": 'time-CoPx',"value": "timeX"},
+                                {"label": 'time-CoPy',"value": "timeY"},
+                                {"label": 'CoPx-CoPy',"value": "XY"},
+                            ],
+                            placeholder="Select a dataset",
+                            value=["timeX","timeY","XY"],
+                            multi=True
+                        ),
                         html.Button(
                             children="submit",
                             id="submit-val",
@@ -294,8 +308,6 @@ def Body():
                 className="six columns",
                 id="main-graph",
                 children=[
-                    html.Label("Multi-Select Dropdown"),
-                    html.H1(id="select-data",children=["select data setting"]),
                     html.Br(),
                     html.H1(id="select-graph",children=["select graph setting"]),
                     dcc.Graph(id="graph-3d-plot", style={"height": "98vh"})

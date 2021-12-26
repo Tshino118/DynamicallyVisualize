@@ -1,12 +1,14 @@
 import dash
 from dash.dependencies import Input, Output, State
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 import dash_core_components as dcc
 import dash_html_components as html
 import numpy as np
 import pandas as pd
 import dataRead
 import pathlib
+import math
 PATH = pathlib.Path(__file__).parent
 
 dataClass=dataRead.dataSets
@@ -17,7 +19,7 @@ input_indexes=dataClass.Input_indexes(input_data)
 figure_dict=dataClass.Figure_dict(input_data)
 feature_unique=dataClass.Feature_unique(input_features)
 feature_dict=dataClass.Feature_dict(feature_unique)
-io_dict=dataClass.IO_dict(feature_unique,input_features)
+
 
 with open(PATH.joinpath("asset/demo_intro.md"), "r") as file:
     demo_intro_md = file.read()
@@ -116,13 +118,17 @@ def add_callbacks(app):
                 Number of clusters:{numberOfClusters} type{type(numberOfClusters)}"
             ]
             
-
     #add graph-3d-plot callbacks
     def graph_callbacks():
+        graphTypeLabel={
+            'timeX':{"description":"right and left moving Line","specs":{"type": "xy"}}, 
+            'timeY':{"description":"top and bottom moving Line","specs":{"type": "xy"}},
+            'XY':{"description":"body moving Line","specs":{"type": "xy"}},
+            'timeXY':{"description":"body moving with time-series Line","specs":{"type": "scene"}}
+        }
         @app.callback(
             [
                 Output(f"graph-3d-plot", "figure"),
-                Output("select-graph", "children")
             ],
             [
                 Input("submit-val","n_clicks"),
@@ -131,27 +137,46 @@ def add_callbacks(app):
                 State("checklist-week", "value"),
                 State("checklist-eye_state", "value"),
                 State("slider-numberOfClusters", "value"),
+                State("dropdown-graph-type", "value")
             ]
         )
-        def graph3d(n_clicks,dataset,id_user,week,eye_state,numberOfClusters):
-            id_user_io=pd.Series()
-            week_io=pd.Series()
-            eye_state_io=pd.Series()
+        def graph3d(n_clicks,dataset,id_user,week,eye_state,numberOfClusters,graph_type):
+            id_user_io=[]
+            week_io=[]
+            eye_state_io=[]
+            feature=input_features["feature"].set_index('id_index')
             for val in id_user:
-                id_user_io+=pd.Series(io_dict["id"][val])
+                id_user_io.extend(feature[feature['id_user']==val].index)
             for val in week:
-                week_io+=pd.Series(io_dict["week"][val])
+                week_io.extend(feature[feature['week']==val].index)
             for val in eye_state:
-                eye_state_io+=pd.Series(io_dict["eye_state"][val])
-            io_data=id_user_io+week_io+eye_state_io
-            io_data=io_data.astype('bool')
-            io_index=[index for index,io in zip(input_indexes,io_data) if io==True ]
+                eye_state_io.extend(feature[feature['eye_state']==val].index)
+            select_data_index = list(set(id_user_io) & set(week_io) & set(eye_state_io))
 
             #clusterNumber=kMeans_dict[dataset]["predict"]["data"]["xy"].loc[numberOfClusters]
-            target_fig=figure_dict[dataset]["timeXY"]#{'index':Fig_xyz(),'index2':Fig_xyz(),...}
-            timeXY=[target_fig[index] for index in io_index]
-            figure=go.Figure(data=timeXY)
-            return [figure,f"dataset:{dataset} io_index:{io_index}\ntimeXY:{timeXY}"]
+            num=len(graph_type)
+            rows=math.ceil(math.sqrt(num))
+            cols=math.ceil(num/int(rows))
+            specs=[[] for _ in rows]
+            cnt=0
+            for row in range(rows):
+                for col in range(cols):
+                    if (cnt<num):
+                        specs=graphTypeLabel[graph_type[cnt]]["specs"]
+            figure = make_subplots(
+                rows=rows,cols=cols,
+                subplot_titles=[graphTypeLabel[type]["description"] for type in graph_type],
+                specs=specs
+            )
+            cnt=0
+            for row in range(rows):
+                for col in range(cols):
+                    if (cnt<num):
+                        graphType=graph_type[cnt]
+                        target_fig=figure_dict[dataset][graphType]#{'index':Fig_xyz(),'index2':Fig_xyz(),...}
+                        [figure.append_trace(trace=target_fig[index],row=row+1, col=col+1) for index in select_data_index]
+                        cnt+=1
+            return [figure]
 
     #add clicked on graph-3d-plot callbacks
     def plotClick_callbacks():
