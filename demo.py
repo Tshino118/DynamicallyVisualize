@@ -26,14 +26,14 @@ ids={
     "demo-explanation":["description-text","learn-more-button"],
     "app-body":{
         "setting":[
-            "dropdown-dataset",
-            "checklist-id_user-all",
-            "checklist-id_user",
-            "checklist-week-all",
-            "checklist-week",
-            "checklist-eye_state-all",
-            "checklist-eye_state",
-            "slider-numberOfClusters"
+            "dropdown-setting-dataset",
+            "checklist-setting-id_user-all",
+            "checklist-setting-id_user",
+            "checklist-setting-week-all",
+            "checklist-setting-week",
+            "checklist-setting-eye_state-all",
+            "checklist-setting-eye_state",
+            "slider-setting-numberOfClusters"
         ],
         "main-graph":[
             "select-data",
@@ -153,7 +153,7 @@ def Header():
                     html.Div(
                         [
                             html.H3(
-                                "t-SNE Explorer",
+                                "Dynamically Visualize",
                                 className="header_title",
                                 id="app-title",
                             )
@@ -181,7 +181,7 @@ def description():
 
 def Body():
     dataClass=dataRead.dataSets
-    input_data=dataClass.Input_data()
+    #input_data=dataClass.Input_data()
     input_features=dataClass.Input_features()
     feature_unique=dataClass.Feature_unique(input_features)
     feature_dict=dataClass.Feature_dict(feature_unique)
@@ -190,6 +190,32 @@ def Body():
     def Store():
         return html.Div(
             children=[
+                #dcc.Store(
+                #    id="indexes-store",
+                #    storage_type="session",
+                #    data=dataClass.Input_indexes(input_data),
+                #    clear_data=False
+                #),
+
+                #dcc.Store(
+                #    id="figure-store",
+                #    storage_type="session",
+                #    data=dataClass.Figure_dict(input_data),
+                #    clear_data=False
+                #),
+                
+                #dcc.Store(
+                #    id="IO-store",
+                #    storage_type="session",
+                #    data=dataClass.IO_dict(feature_unique,input_features),
+                #    clear_data=False
+                #),
+                #dcc.Store(
+                #    id="kMeans-store",
+                #    storage_type="session",
+                #    data=dataClass.KMeans_dict(),
+                #    clear_data=False
+                #),
             ]
         )
 
@@ -198,45 +224,13 @@ def Body():
         id="app-body",
         style={"padding": "10px"},
         children=[
-            dcc.Store(
-                id='testStore',
-                storage_type="session",
-                data={"aaa":0},
-                clear_data=False
-            ),
-            #dcc.Store(
-            #    id="indexes-store",
-            #    storage_type="session",
-            #    data=dataClass.Input_indexes(input_data),
-            #    clear_data=False
-            #),
-
-            #dcc.Store(
-            #    id="figure-store",
-            #    storage_type="session",
-            #    data=dataClass.Figure_dict(input_data),
-            #    clear_data=False
-            #),
-            
-            #dcc.Store(
-            #    id="IO-store",
-            #    storage_type="session",
-            #    data=dataClass.IO_dict(feature_unique,input_features),
-            #    clear_data=False
-            #),
-            #dcc.Store(
-            #    id="kMeans-store",
-            #    storage_type="session",
-            #    data=dataClass.KMeans_dict(),
-            #    clear_data=False
-            #),
             html.Div(
                 className="three columns",
                 id="setting",
                 children=[
                     Card([
                         dcc.Dropdown(
-                            id="dropdown-dataset",
+                            id="dropdown-setting-dataset",
                             searchable=False,
                             clearable=False,
                             options=[
@@ -250,30 +244,30 @@ def Body():
                             value='lerp',
                         ),
                         NamedChecklist(
-                            #id="checklist-id_user-all"
-                            #id="checklist-id_user"
+                            #id="checklist-setting-id_user-all"
+                            #id="checklist-setting-id_user"
                             name="id_user",
-                            short='id_user',
-                            options=feature_dict["id"]['options'],
+                            short='setting-id_user',
+                            options=feature_dict["id_user"]['options'],
                         ),
                         NamedChecklist(
-                            #id="checklist-week-all"
-                            #id="checklist-week"
+                            #id="checklist-setting-week-all"
+                            #id="checklist-setting-week"
                             name="week",
-                            short='week',
+                            short='setting-week',
                             options=feature_dict["week"]['options'],
                         ),
                         NamedChecklist(
-                            #id="checklist-eye_state-all"
-                            #id="checklist-eye_state"
+                            #id="checklist-setting-eye_state-all"
+                            #id="checklist-setting-eye_state"
                             name="eye_state",
-                            short='eye_state',
+                            short='setting-eye_state',
                             options=feature_dict["eye_state"]['options'],
                         ),
                         NamedSlider(
-                            #id="slider-numberOfClusters"
+                            #id="slider-setting-numberOfClusters"
                             name="Number of Clusters",
-                            short="numberOfClusters",
+                            short="setting-numberOfClusters",
                             min=2,
                             max=10,
                             step=None,
@@ -283,7 +277,21 @@ def Body():
                             },
                         ),
                         dcc.Dropdown(
-                            id="dropdown-graph-type",
+                            id="dropdown-setting-clusteringData",
+                            searchable=False,
+                            clearable=False,
+                            options=[
+                                {
+                                    "label": key,
+                                    "value": key
+                                }
+                                for key in ['x','y','xy']
+                            ],
+                            placeholder="Select clustering data set",
+                            value='xy',
+                        ),
+                        dcc.Dropdown(
+                            id="dropdown-setting-graph_type",
                             searchable=False,
                             clearable=False,
                             options=[
@@ -292,13 +300,27 @@ def Body():
                                 {"label": 'time-CoPy',"value": "timeY"},
                                 {"label": 'CoPx-CoPy',"value": "XY"},
                             ],
-                            placeholder="Select a dataset",
+                            placeholder="Selects graph type",
                             value=["timeX","timeY","XY"],
+                            multi=True
+                        ),
+                        dcc.Dropdown(
+                            id="dropdown-graph-color",
+                            searchable=False,
+                            clearable=False,
+                            options=[
+                                {"label": 'id',"value": "id_user"},
+                                {"label": 'week',"value": "week"},
+                                {"label": 'eye state',"value": "eye_state"},
+                                {"label": 'cluster',"value": "cluster"},
+                            ],
+                            placeholder="Selects graph color",
+                            value=["id_user"],
                             multi=True
                         ),
                         html.Button(
                             children="submit",
-                            id="submit-val",
+                            id="setting-submit",
                             n_clicks=0
                         )
                     ]),
@@ -308,9 +330,11 @@ def Body():
                 className="six columns",
                 id="main-graph",
                 children=[
-                    html.Br(),
-                    html.H1(id="select-graph",children=["select graph setting"]),
-                    dcc.Graph(id="graph-3d-plot", style={"height": "98vh"})
+                    html.H1(id="graph-select",children=["select graph setting"]),
+                    html.Hr(),
+                    dcc.Loading(
+                        children=html.Div(id="graph-area")
+                    )
                 ],
             ),
             html.Div(
@@ -322,6 +346,7 @@ def Body():
                         children=[
                             html.Div(
                                 id="div-plot-click-message",
+                                children=['click-message'],
                                 style={
                                     "text-align": "center",
                                     "margin-bottom": "7px",

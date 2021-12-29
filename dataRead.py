@@ -19,17 +19,17 @@ class dataSets:
             "meanZero": {
                 'label':'mean zero',
                 'description':'The average value of each data is zero.',
-                'data' :pd.read_csv(DATA_PATH.joinpath("meanZero.csv")),
+                'data' :pd.read_csv(DATA_PATH.joinpath("meanZero.csv"),index_col=0),
             },
             "medianZero": {
                 'label':'median zero',
                 'description':'The median of each data set is zero.',
-                'data' :pd.read_csv(DATA_PATH.joinpath("medianZero.csv")),
+                'data' :pd.read_csv(DATA_PATH.joinpath("medianZero.csv"),index_col=0),
             },
             "firstPointZero": {
                 'label':'first point value is zero',
                 'description':'The first value of each data set is zero.',
-                'data' :pd.read_csv(DATA_PATH.joinpath("firstPointZero.csv")),
+                'data' :pd.read_csv(DATA_PATH.joinpath("firstPointZero.csv"),index_col=0),
             }
         }
     
@@ -39,13 +39,13 @@ class dataSets:
     def Input_features():
         print('read features')
         return {
-            'feature':pd.read_csv(DATA_PATH.joinpath("features.csv")),
-            'statistics':pd.read_csv(DATA_PATH.joinpath("statistics.csv"))
+            'feature':pd.read_csv(DATA_PATH.joinpath("features.csv"),index_col=0),
+            'statistics':pd.read_csv(DATA_PATH.joinpath("statistics.csv"),index_col=0)
         }
 
     def Feature_unique(input_features):
         return {
-            "id":input_features["feature"]['id_user'].unique(),
+            "id_user":input_features["feature"]['id_user'].unique(),
             "week":input_features["feature"]['week'].unique(),
             "eye_state":input_features["feature"]['eye_state'].unique(),
         }
@@ -53,12 +53,12 @@ class dataSets:
     def Feature_dict(feature_unique):
         #feature setting
         return {
-            "id":{
+            "id_user":{
                 'label':'select ids',
                 'options':[{
                     'label': key,
                     'value': key
-                } for key in feature_unique['id']],
+                } for key in feature_unique['id_user']],
             },
             "week":{
                 'label':'select weekdays',
@@ -97,17 +97,17 @@ class dataSets:
                 'inertia':{
                     'label':'cluster inertia',
                     'data': {
-                        'x':pd.read_csv(KMEANS_PATH.joinpath("lerp/inertia/X.csv")),
-                        'y':pd.read_csv(KMEANS_PATH.joinpath("lerp/inertia/Y.csv")),
-                        'xy':pd.read_csv(KMEANS_PATH.joinpath("lerp/inertia/XY.csv"))
+                        'x':pd.read_csv(KMEANS_PATH.joinpath("lerp/inertia/X.csv"),index_col=0),
+                        'y':pd.read_csv(KMEANS_PATH.joinpath("lerp/inertia/Y.csv"),index_col=0),
+                        'xy':pd.read_csv(KMEANS_PATH.joinpath("lerp/inertia/XY.csv"),index_col=0)
                     },
                 },
                 'predict':{
                     'label':'predict cluster number',
                     'data': {
-                        'x':pd.read_csv(KMEANS_PATH.joinpath("lerp/predict/X.csv")),
-                        'y':pd.read_csv(KMEANS_PATH.joinpath("lerp/predict/Y.csv")),
-                        'xy':pd.read_csv(KMEANS_PATH.joinpath("lerp/predict/XY.csv"))
+                        'x':pd.read_csv(KMEANS_PATH.joinpath("lerp/predict/X.csv"),index_col=0),
+                        'y':pd.read_csv(KMEANS_PATH.joinpath("lerp/predict/Y.csv"),index_col=0),
+                        'xy':pd.read_csv(KMEANS_PATH.joinpath("lerp/predict/XY.csv"),index_col=0)
                     }
                 }
             },
@@ -115,17 +115,17 @@ class dataSets:
                 'inertia':{
                     'label':'cluster inertia',
                     'data': {
-                        'x':pd.read_csv(KMEANS_PATH.joinpath("meanZero/inertia/X.csv")),
-                        'y':pd.read_csv(KMEANS_PATH.joinpath("meanZero/inertia/Y.csv")),
-                        'xy':pd.read_csv(KMEANS_PATH.joinpath("meanZero/inertia/XY.csv"))
+                        'x':pd.read_csv(KMEANS_PATH.joinpath("meanZero/inertia/X.csv"),index_col=0),
+                        'y':pd.read_csv(KMEANS_PATH.joinpath("meanZero/inertia/Y.csv"),index_col=0),
+                        'xy':pd.read_csv(KMEANS_PATH.joinpath("meanZero/inertia/XY.csv"),index_col=0)
                     },
                 },
                 'predict':{
                     'label':'predict cluster number',
                     'data': {
-                        'x':pd.read_csv(KMEANS_PATH.joinpath("meanZero/predict/X.csv")),
-                        'y':pd.read_csv(KMEANS_PATH.joinpath("meanZero/predict/Y.csv")),
-                        'xy':pd.read_csv(KMEANS_PATH.joinpath("meanZero/predict/XY.csv"))
+                        'x':pd.read_csv(KMEANS_PATH.joinpath("meanZero/predict/X.csv"),index_col=0),
+                        'y':pd.read_csv(KMEANS_PATH.joinpath("meanZero/predict/Y.csv"),index_col=0),
+                        'xy':pd.read_csv(KMEANS_PATH.joinpath("meanZero/predict/XY.csv"),index_col=0)
                     }
                 }
             },
@@ -133,17 +133,17 @@ class dataSets:
                 'inertia':{
                     'label':'cluster inertia',
                     'data': {
-                        'x':pd.read_csv(KMEANS_PATH.joinpath("medianZero/inertia/X.csv")),
-                        'y':pd.read_csv(KMEANS_PATH.joinpath("medianZero/inertia/Y.csv")),
-                        'xy':pd.read_csv(KMEANS_PATH.joinpath("medianZero/inertia/XY.csv"))
+                        'x':pd.read_csv(KMEANS_PATH.joinpath("medianZero/inertia/X.csv"),index_col=0),
+                        'y':pd.read_csv(KMEANS_PATH.joinpath("medianZero/inertia/Y.csv"),index_col=0),
+                        'xy':pd.read_csv(KMEANS_PATH.joinpath("medianZero/inertia/XY.csv"),index_col=0)
                     },
                 },
                 'predict':{
                     'label':'predict cluster number',
                     'data': {
-                        'x':pd.read_csv(KMEANS_PATH.joinpath("medianZero/predict/X.csv")),
-                        'y':pd.read_csv(KMEANS_PATH.joinpath("medianZero/predict/Y.csv")),
-                        'xy':pd.read_csv(KMEANS_PATH.joinpath("medianZero/predict/XY.csv"))
+                        'x':pd.read_csv(KMEANS_PATH.joinpath("medianZero/predict/X.csv"),index_col=0),
+                        'y':pd.read_csv(KMEANS_PATH.joinpath("medianZero/predict/Y.csv"),index_col=0),
+                        'xy':pd.read_csv(KMEANS_PATH.joinpath("medianZero/predict/XY.csv"),index_col=0)
                     }
                 }
             },
@@ -151,17 +151,17 @@ class dataSets:
                 'inertia':{
                     'label':'cluster inertia',
                     'data': {
-                        'x':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero/inertia/X.csv")),
-                        'y':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero/inertia/Y.csv")),
-                        'xy':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero/inertia/XY.csv"))
+                        'x':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero/inertia/X.csv"),index_col=0),
+                        'y':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero/inertia/Y.csv"),index_col=0),
+                        'xy':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero/inertia/XY.csv"),index_col=0)
                     },
                 },
                 'predict':{
                     'label':'predict cluster number',
                     'data': {
-                        'x':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero/predict/X.csv")),
-                        'y':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero/predict/Y.csv")),
-                        'xy':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero/predict/XY.csv"))
+                        'x':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero/predict/X.csv"),index_col=0),
+                        'y':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero/predict/Y.csv"),index_col=0),
+                        'xy':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero/predict/XY.csv"),index_col=0)
                     }
                 }
             }
@@ -170,8 +170,8 @@ class dataSets:
     def IO_dict(feature_unique,input_features):
         print('make IO')
         return {
-            "id":{
-                f'{key}':val.values for key,val in zip(feature_unique['id'],[input_features["feature"]['id_user']==key for key in feature_unique['id'] ])
+            "id_user":{
+                f'{key}':val.values for key,val in zip(feature_unique['id_user'],[input_features["feature"]['id_user']==key for key in feature_unique['id'] ])
             },
             "week":{
                 f'{key}':val.values for key,val in zip(feature_unique['week'],[input_features["feature"]['week']==key for key in feature_unique['week'] ])

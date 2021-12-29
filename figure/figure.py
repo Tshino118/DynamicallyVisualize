@@ -23,12 +23,12 @@ def Read_csv_multi(dir,index_col=None):
 
 def Fig_xyz(x,y,z,traceName):
     scatterline3d=go.Scatter3d
-    data=scatterline3d(x=x,y=y,z=z,marker={"size":1},line={"width":1},name=traceName)
+    data=scatterline3d(x=x,y=y,z=z,line={"width":1},mode='lines',name=traceName)
     return data
 
 def Fig_xy(x,y,traceName):
     scatterline=go.Scatter
-    data=scatterline(x=x,y=y,marker={"size":1},line={"width":1},name=traceName)
+    data=scatterline(x=x,y=y,line={"width":1},name=traceName)
     return data
 #22222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
 

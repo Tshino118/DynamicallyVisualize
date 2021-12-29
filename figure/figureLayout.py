@@ -5,8 +5,7 @@ import pathlib
 import os
 # get relative data folder
 PATH = pathlib.Path(__file__).parent
-SETTING_PATH = PATH.joinpath("setting").resolve()
-figSetting=pd.read_csv(SETTING_PATH.joinpath("figSetting.csv"),index_col=['dataType','fig','feature','dimension'])
+figSetting=pd.read_csv(PATH.joinpath("figSetting.csv"),index_col=['dataType','fig','feature','dimension'])
 
 def fig_timeX(dataType):
     fig='timeX'
