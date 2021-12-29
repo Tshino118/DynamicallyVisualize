@@ -65,7 +65,7 @@ def fig_timeX(dataType):
         "b": 10,
         "l": 10,
         "r": 10,
-        "t": 100
+        "t": 10
         }
     }
     return layout
@@ -130,7 +130,7 @@ def fig_timeY(dataType):
         "margin": {
         "b": 10,
         "l": 10,
-        "r": 100,
+        "r": 10,
         "t": 10
         }
     }
@@ -196,7 +196,7 @@ def fig_XY(dataType):
         "b": 10,
         "l": 10,
         "r": 10,
-        "t": 100
+        "t": 10
         }
     }
     return layout
@@ -372,7 +372,7 @@ def fig_mean(title):
         "margin": {
         "b": 10,
         "l": 10,
-        "r": 100,
+        "r": 10,
         "t": 10
         }
     }

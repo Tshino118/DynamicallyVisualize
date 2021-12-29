@@ -330,7 +330,7 @@ def Body():
                 className="six columns",
                 id="main-graph",
                 children=[
-                    html.H1(id="graph-select",children=["select graph setting"]),
+                    html.Div(id="graph-color"),
                     html.Hr(),
                     dcc.Loading(
                         children=html.Div(id="graph-area")
