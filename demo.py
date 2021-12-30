@@ -103,7 +103,7 @@ def NamedChecklist(name, short, options):
                     dcc.Checklist(
                         id=f"checklist-{short}-all",
                         options=[{'label':'All','value':'All'}],
-                        value=['All'],
+                        value=[],
                         labelStyle={'display': 'inline-block'}
                     ),
                     dcc.Checklist(
@@ -334,7 +334,10 @@ def Body():
                     html.Div(id="graph-color"),
                     html.Hr(),
                     dcc.Loading(
-                        children=html.Div(id="graph-area")
+                        children=[
+                            html.Div(id="graph-area"),
+                            html.Div(id="graph-area-cluster",style={'overflow-x': 'scroll','text-align':'left'})
+                        ]
                     )
                 ],
             ),

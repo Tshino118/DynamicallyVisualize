@@ -97,17 +97,17 @@ class dataSets:
                 'inertia':{
                     'label':'cluster inertia',
                     'data': {
-                        'x':pd.read_csv(KMEANS_PATH.joinpath("lerp/inertia/X.csv"),index_col=0),
-                        'y':pd.read_csv(KMEANS_PATH.joinpath("lerp/inertia/Y.csv"),index_col=0),
-                        'xy':pd.read_csv(KMEANS_PATH.joinpath("lerp/inertia/XY.csv"),index_col=0)
+                        'x':pd.read_csv(KMEANS_PATH.joinpath("lerp_clusterInertia.csv"),index_col=0,usecols=['x']),
+                        'y':pd.read_csv(KMEANS_PATH.joinpath("lerp_clusterInertia.csv"),index_col=0,usecols=['y']),
+                        'xy':pd.read_csv(KMEANS_PATH.joinpath("lerp_clusterInertia.csv"),index_col=0,usecols=['xy'])
                     },
                 },
                 'predict':{
                     'label':'predict cluster number',
                     'data': {
-                        'x':pd.read_csv(KMEANS_PATH.joinpath("lerp/predict/X.csv"),index_col=0),
-                        'y':pd.read_csv(KMEANS_PATH.joinpath("lerp/predict/Y.csv"),index_col=0),
-                        'xy':pd.read_csv(KMEANS_PATH.joinpath("lerp/predict/XY.csv"),index_col=0)
+                        'x':pd.read_csv(KMEANS_PATH.joinpath("lerp_kMeansPredict_x.csv"),index_col=0),
+                        'y':pd.read_csv(KMEANS_PATH.joinpath("lerp_kMeansPredict_y.csv"),index_col=0),
+                        'xy':pd.read_csv(KMEANS_PATH.joinpath("lerp_kMeansPredict_xy.csv"),index_col=0)
                     }
                 }
             },
@@ -115,17 +115,17 @@ class dataSets:
                 'inertia':{
                     'label':'cluster inertia',
                     'data': {
-                        'x':pd.read_csv(KMEANS_PATH.joinpath("meanZero/inertia/X.csv"),index_col=0),
-                        'y':pd.read_csv(KMEANS_PATH.joinpath("meanZero/inertia/Y.csv"),index_col=0),
-                        'xy':pd.read_csv(KMEANS_PATH.joinpath("meanZero/inertia/XY.csv"),index_col=0)
+                        'x':pd.read_csv(KMEANS_PATH.joinpath("meanZero_clusterInertia.csv"),index_col=0,usecols=['x']),
+                        'y':pd.read_csv(KMEANS_PATH.joinpath("meanZero_clusterInertia.csv"),index_col=0,usecols=['y']),
+                        'xy':pd.read_csv(KMEANS_PATH.joinpath("meanZero_clusterInertia.csv"),index_col=0,usecols=['xy'])
                     },
                 },
                 'predict':{
                     'label':'predict cluster number',
                     'data': {
-                        'x':pd.read_csv(KMEANS_PATH.joinpath("meanZero/predict/X.csv"),index_col=0),
-                        'y':pd.read_csv(KMEANS_PATH.joinpath("meanZero/predict/Y.csv"),index_col=0),
-                        'xy':pd.read_csv(KMEANS_PATH.joinpath("meanZero/predict/XY.csv"),index_col=0)
+                        'x':pd.read_csv(KMEANS_PATH.joinpath("meanZero_kMeansPredict_x.csv"),index_col=0),
+                        'y':pd.read_csv(KMEANS_PATH.joinpath("meanZero_kMeansPredict_y.csv"),index_col=0),
+                        'xy':pd.read_csv(KMEANS_PATH.joinpath("meanZero_kMeansPredict_xy.csv"),index_col=0)
                     }
                 }
             },
@@ -133,17 +133,17 @@ class dataSets:
                 'inertia':{
                     'label':'cluster inertia',
                     'data': {
-                        'x':pd.read_csv(KMEANS_PATH.joinpath("medianZero/inertia/X.csv"),index_col=0),
-                        'y':pd.read_csv(KMEANS_PATH.joinpath("medianZero/inertia/Y.csv"),index_col=0),
-                        'xy':pd.read_csv(KMEANS_PATH.joinpath("medianZero/inertia/XY.csv"),index_col=0)
+                        'x':pd.read_csv(KMEANS_PATH.joinpath("medianZero_clusterInertia.csv"),index_col=0,usecols=['x']),
+                        'y':pd.read_csv(KMEANS_PATH.joinpath("medianZero_clusterInertia.csv"),index_col=0,usecols=['y']),
+                        'xy':pd.read_csv(KMEANS_PATH.joinpath("medianZero_clusterInertia.csv"),index_col=0,usecols=['xy'])
                     },
                 },
                 'predict':{
                     'label':'predict cluster number',
                     'data': {
-                        'x':pd.read_csv(KMEANS_PATH.joinpath("medianZero/predict/X.csv"),index_col=0),
-                        'y':pd.read_csv(KMEANS_PATH.joinpath("medianZero/predict/Y.csv"),index_col=0),
-                        'xy':pd.read_csv(KMEANS_PATH.joinpath("medianZero/predict/XY.csv"),index_col=0)
+                        'x':pd.read_csv(KMEANS_PATH.joinpath("medianZero_kMeansPredict_x.csv"),index_col=0),
+                        'y':pd.read_csv(KMEANS_PATH.joinpath("medianZero_kMeansPredict_y.csv"),index_col=0),
+                        'xy':pd.read_csv(KMEANS_PATH.joinpath("medianZero_kMeansPredict_xy.csv"),index_col=0)
                     }
                 }
             },
@@ -151,17 +151,17 @@ class dataSets:
                 'inertia':{
                     'label':'cluster inertia',
                     'data': {
-                        'x':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero/inertia/X.csv"),index_col=0),
-                        'y':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero/inertia/Y.csv"),index_col=0),
-                        'xy':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero/inertia/XY.csv"),index_col=0)
+                        'x':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero_clusterInertia.csv"),index_col=0,usecols=['x']),
+                        'y':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero_clusterInertia.csv"),index_col=0,usecols=['y']),
+                        'xy':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero_clusterInertia.csv"),index_col=0,usecols=['xy'])
                     },
                 },
                 'predict':{
                     'label':'predict cluster number',
                     'data': {
-                        'x':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero/predict/X.csv"),index_col=0),
-                        'y':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero/predict/Y.csv"),index_col=0),
-                        'xy':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero/predict/XY.csv"),index_col=0)
+                        'x':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero_kMeansPredict_x.csv"),index_col=0),
+                        'y':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero_kMeansPredict_y.csv"),index_col=0),
+                        'xy':pd.read_csv(KMEANS_PATH.joinpath("firstPointZero_kMeansPredict_xy.csv"),index_col=0)
                     }
                 }
             }

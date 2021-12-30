@@ -5,10 +5,9 @@ import dash
 from demo import add_layout
 from demoCallback import add_callbacks
 
-# for the Local version, import local_layout and local_callbacks
+#for the Local version, import local_layout and local_callbacks
 #from local import add_layout, add_callbacks
-# 
-# end
+
 app = dash.Dash(
     __name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}]
 )

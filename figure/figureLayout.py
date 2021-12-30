@@ -12,14 +12,14 @@ def fig_timeX(dataType):
     layout={
         "xaxis": {
             "type": "linear",
-            "dtick": 10,
+            "dtick": 5,
             "range": figSetting.loc[dataType,fig,'range','x'],
             "ticks": "inside",
             "title": {
                 "font": {
                     "size": 18
                 },
-                "text": "Move right-left"
+                "text": "Move left-right"
             },
             "domain": [0,1],
             "showline": False,
@@ -41,16 +41,13 @@ def fig_timeX(dataType):
             "type": "linear",
             "dtick": 10,
             "range": figSetting.loc[dataType,fig,'range','y'],
-            "domain": [
-                0,
-                1
-            ],
+            "domain": [0,1],
             "ticks": "inside",
             "title": {
                 "font": {
                 "size": 18
                 },
-                "text": "Move top-bottom"
+                "text": "Move bottom-top"
             },
             "tickmode": "linear",
             "autorange": False,
@@ -105,14 +102,14 @@ def fig_timeY(dataType):
         },
         "yaxis": {
             "type": "linear",
-            "dtick": 5,
+            "dtick": 10,
             "range": figSetting.loc[dataType,fig,'range','y'],
             "ticks": "inside",
             "title": {
                 "font": {
                 "size": 18
                 },
-                "text": "Move top-bottom"
+                "text": "Move bottom-top"
             },
             "domain": [
                 0,
@@ -148,7 +145,7 @@ def fig_XY(dataType):
                 "font": {
                     "size": 18
                 },
-                "text": "Move right-left"
+                "text": "Move left-right"
             },
             "domain": [0,1],
             "showline": False,
@@ -216,7 +213,7 @@ def fig_timeXY(dataType):
                     "font": {
                     "size": 18
                     },
-                    "text": "Move right-left"
+                    "text": "Move left-right"
                 },
                 "range": figSetting.loc[dataType,fig,'range','x'],
             },
@@ -232,7 +229,7 @@ def fig_timeXY(dataType):
             "zaxis": {
                 "title": {
                     "font": {
-                    "size": 18
+                        "size": 18
                     },
                     "text": "time"
                 },
@@ -262,7 +259,7 @@ def fig_contour():
                 "font": {
                     "size": 18
                 },
-                "text": "Move right-left"
+                "text": "Move left-right"
             },
             "showline": False,
             "tickmode": "linear",
@@ -292,7 +289,7 @@ def fig_contour():
                 "font": {
                 "size": 18
                 },
-                "text": "Move top-bottom"
+                "text": "Move bottom-top"
             },
             "tickmode": "linear",
             "autorange": False,
@@ -394,7 +391,7 @@ def fig_multiContour(title):
                 "font": {
                     "size": 18
                 },
-                "text": "Move right-left"
+                "text": "Move left-right"
             },
             "showline": False,
             "tickmode": "linear",
@@ -424,7 +421,7 @@ def fig_multiContour(title):
                 "font": {
                 "size": 18
                 },
-                "text": "Move top-bottom"
+                "text": "Move bottom-top"
             },
             "tickmode": "linear",
             "autorange": False,
@@ -456,7 +453,7 @@ def fig_multiXYtime(title):
                     "font": {
                     "size": 18
                     },
-                    "text": "Move right-left"
+                    "text": "Move left-right"
                 },
                 "range": [-60,60],
             },
@@ -465,7 +462,7 @@ def fig_multiXYtime(title):
                     "font": {
                     "size": 18
                     },
-                    "text": "Move top-bottom"
+                    "text": "Move bottom-top"
                 },
                 "range": [-60,60],
             },

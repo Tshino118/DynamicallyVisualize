@@ -3,6 +3,7 @@ from tqdm import tqdm
 import os
 import pandas as pd
 import glob
+import numpy as np
 
 def Read_csv_one(path,index_col=None):
     if(os.path.isfile(path)==True):
@@ -50,8 +51,8 @@ def make_figure(input_data):
         for index,data in dataMatrix.iterrows():
             length=len(data)
             lengthHarf=int(length/2)
-            start=5
-            time=[round(i*0.01,3) for i in range(start,lengthHarf+(start*100))]
+            N=6000
+            time = np.linspace(5.01, 65, N, endpoint=True)
             data_x=data[0:lengthHarf]
             data_y=data[lengthHarf+1:length]
             timeX.update({f'{index}':Fig_xy(x=time,y=data_x,traceName=index)})
