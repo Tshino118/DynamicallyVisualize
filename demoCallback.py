@@ -131,10 +131,26 @@ def add_callbacks(app):
     #add graph-area callbacks
     def graph_callbacks():
         graphTypeLabel={
-            'timeX':{"description":"right and left moving Line","specs":{"type": "xy"}, "title":{'x':'time series','y':'left-right'}},
-            'timeY':{"description":"top and bottom moving Line","specs":{"type": "xy"}, "title":{'x':'time series','y':'top-bottom'}},
-            'XY':{"description":"body moving Line","specs":{"type": "xy"}, "title":{'x':'left-right','y':'top-bottom'}},
-            'timeXY':{"description":"body moving with time-series Line","specs":{"type": "scene"}, "title":{'x':'left-right','y':'top-bottom','z':'time series'}}
+            'timeX':{
+                "description":"right and left moving Line",
+                "specs":{"type": "xy"}, 
+                "title":{'x':'time series','y':'right-left'}
+            },
+            'timeY':{
+                "description":"top and bottom moving Line",
+                "specs":{"type": "xy"}, 
+                "title":{'x':'time series','y':'bottom-top'}
+            },
+            'XY':{
+                "description":"body moving Line",
+                "specs":{"type": "xy"}, 
+                "title":{'x':'left-right','y':'bottom-top'}
+            },
+            'timeXY':{
+                "description":"body moving with time-series Line",
+                "specs":{"type": "scene"}, 
+                "title":{'x':'left-right','y':'top-bottom','z':'time series'}
+            }
         }
         feature=input_features["feature"]
         figSetting=pd.read_csv(PATH.joinpath(r"figure/figSetting.csv"),index_col=['dataType','fig','feature','dimension'])
@@ -143,7 +159,7 @@ def add_callbacks(app):
             [   
                 Output(f"graph-area", "children"),
                 Output(f"graph-color","children"),
-                Output(f"color-store","data"),
+                Output(f"graph-area-cluster","children"),
             ],
             [
                 Input("setting-submit", "n_clicks"),
@@ -189,8 +205,11 @@ def add_callbacks(app):
             i_list=[0 for _ in select_data_index]
             w_list=[0 for _ in select_data_index]
             e_list=[0 for _ in select_data_index]
+
+            k_select_list=[cluster_dict[index] for index in select_data_index]#->int index list
+            
             if "cluster" in set(selectColor):
-                k_list=[cluster_dict[index] for index in select_data_index]#->int index list
+                k_list=k_select_list
             if "id_user" in set(selectColor):
                 i_list=[id_dict[feature.at[index,'id_user']] for index in select_data_index]#->int index list
             if "week" in set(selectColor):
@@ -205,64 +224,6 @@ def add_callbacks(app):
             #    for w in set(w_list)
             #    for e in set(e_list)
             #]
-            
-
-            graphType_num=len(graph_type)
-            rows=math.ceil(math.sqrt(graphType_num))
-            cols=math.ceil(graphType_num/int(rows))
-            #specs=[]
-            #cnt=0
-            #for row in range(rows):
-            #    rowList=[]
-            #    for col in range(cols):
-            #        if(cnt<graphType_num):
-            #            rowList+=[graphTypeLabel[graph_type[cnt]]["specs"]]
-            #        else:
-            #            rowList+=[{}]
-            #        cnt+=1
-            #    specs+=[rowList]
-
-            #figure = make_subplots(
-            #    rows=rows, cols=cols,
-            #    subplot_titles=[graphTypeLabel[type]["description"] for type in graph_type],
-            #    specs=specs
-            #)
-            layoutset={
-                'timeX':figureLayout.fig_timeX(dataType=dataset),
-                'timeY':figureLayout.fig_timeY(dataType=dataset),
-                'XY':figureLayout.fig_XY(dataType=dataset),
-                'timeXY':figureLayout.fig_timeXY(dataType=dataset)
-            }
-            cnt=0
-            tb=[]
-            for row in range(rows):
-                tr=[]
-                for col in range(cols):
-                    if (cnt<graphType_num):
-                        figure=go.Figure()
-                        graphType=graph_type[cnt]
-                        target_fig=figure_dict[dataset][graphType]#{'index':Fig_xyz(),'index2':Fig_xyz(),...}
-                        [figure.add_trace(trace=target_fig[index]) for index in select_data_index]
-                        figure.update_layout(dict1=layoutset[graphType])
-                        figure.update_layout(dict1={
-                            "showlegend":False,
-                        })
-                        figure.update_xaxes(
-                            title_text=graphTypeLabel[graphType]['title']['x'],
-                            range=figSetting.loc[dataset,graphType,'range','x']
-                        )
-                        figure.update_yaxes(
-                            title_text=graphTypeLabel[graphType]['title']['y'],
-                            range=figSetting.loc[dataset,graphType,'range','y']
-                        )
-                        for figureData,k,i,w,e in zip(figure.data,k_list,i_list,w_list,e_list):
-                            figureData['line']['color']=colorDict[f"{k}_{i}_{w}_{e}"]
-                        tr+=[html.Td(children=dcc.Graph(figure=figure,id=f"graph-element-{row}{col}", style={"height": "98vh"}))]
-                        cnt+=1
-                    else:
-                        tr+=[html.Td(id=f"graph-element-{row}{col}", style={"height": "98vh"})]
-                tb+=[html.Tr(children=tr)]
-            figure_table=html.Table(children=html.Tbody(children=tb))
             
             def colorButtonSet(title,short,color):
                 return html.Tr(
@@ -291,13 +252,84 @@ def add_callbacks(app):
                 for e in set(e_list)
             ]
 
+            graphType_num=len(graph_type)
+            rows=math.ceil(math.sqrt(graphType_num))
+            cols=math.ceil(graphType_num/int(rows))
+            #specs=[]
+            #cnt=0
+            #for row in range(rows):
+            #    rowList=[]
+            #    for col in range(cols):
+            #        if(cnt<graphType_num):
+            #            rowList+=[graphTypeLabel[graph_type[cnt]]["specs"]]
+            #        else:
+            #            rowList+=[{}]
+            #        cnt+=1
+            #    specs+=[rowList]
+
+            #figure = make_subplots(
+            #    rows=rows, cols=cols,
+            #    subplot_titles=[graphTypeLabel[type]["description"] for type in graph_type],
+            #    specs=specs
+            #)
+            layoutset={
+                'timeX':figureLayout.fig_timeX(dataType=dataset),
+                'timeY':figureLayout.fig_timeY(dataType=dataset),
+                'XY':figureLayout.fig_XY(dataType=dataset),
+                'timeXY':figureLayout.fig_timeXY(dataType=dataset)
+            }
+
+            def figureCluster(figure_, k_select_list_, numberOfClusters_, numberOfClusters_index_):
+                cluster_fig=[]
+                for k in numberOfClusters_index_:
+                    for figureData,select_k in zip(figure_.data, k_select_list_):#loop figuredata
+                        if k==select_k:
+                            figureData.visible=True
+                        else:
+                            figureData.visible=False
+                    cluster_fig+=[dcc.Graph(figure=figure,id=f"graph-element-cluster{numberOfClusters_}-{k}")]
+                return cluster_fig
+
+            cnt=0
+            tb=[]
+            dataTypeCluster=[]
+            for row in range(rows):
+                tr=[]
+                for col in range(cols):
+                    if (cnt<graphType_num):
+                        figure=go.Figure()
+                        graphType=graph_type[cnt]
+                        target_fig=figure_dict[dataset][graphType]#{'index':Fig_xyz(),'index2':Fig_xyz(),...}
+                        [figure.add_trace(trace=target_fig[index]) for index in select_data_index]
+                        figure.update_layout(dict1=layoutset[graphType])
+                        figure.update_layout(dict1={"showlegend":False})
+                        figure.update_xaxes(
+                            title_text=graphTypeLabel[graphType]['title']['x'],
+                            range=figSetting.loc[dataset,graphType,'range','x']
+                        )
+                        figure.update_yaxes(
+                            title_text=graphTypeLabel[graphType]['title']['y'],
+                            range=figSetting.loc[dataset,graphType,'range','y']
+                        )
+                        for figureData,k,i,w,e in zip(figure.data,k_list,i_list,w_list,e_list):
+                            figureData['line']['color']=colorDict[f"{k}_{i}_{w}_{e}"]
+                        tr+=[html.Td(children=dcc.Graph(figure=figure,id=f"graph-element-{row}{col}", style={"height": "98vh"}))]
+                        dataTypeCluster+=[html.Div(children=[figureCluster(figure_=figure,k_select_list_=k_select_list,numberOfClusters_=numberOfClusters,numberOfClusters_index_=numberOfClusters_index)])]
+                        cnt+=1
+                    else:
+                        tr+=[html.Td(id=f"graph-element-{row}{col}", style={"height": "98vh"})]
+                tb+=[html.Tr(children=tr)]
+            figure_table=html.Table(children=html.Tbody(children=tb))
+            figure_cluster=html.Div(children=dataTypeCluster,style={'display':'inline-block'})
+            
             #daq.ColorPicker(
             #    id=f'color-picker-button-{title}',
             #    label=f'{title}',
             #    value=dict(hex=f'{color}')
             #)
-            color_store={'color_button':[colorDict.keys()]}
-            return [figure_table,color_button,color_store]
+            #color_store={'color_button':[colorDict.keys()]}
+            
+            return [figure_table,color_button,figure_cluster]
     
     ##add color button
     #def colorButton_callbacks(app):
@@ -317,7 +349,7 @@ def add_callbacks(app):
     
 
     #add clicked on graph-area callbacks
-    def plotClick_callbacks(app):
+    def plotClick_callbacks():
         @app.callback(
             [
                 Output(f"div-plot-click-message", "children"),
