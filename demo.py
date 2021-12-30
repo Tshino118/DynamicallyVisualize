@@ -3,7 +3,6 @@ from genericpath import isfile
 import io
 import pathlib
 import os
-
 import numpy as np
 import dash_core_components as dcc
 import dash_html_components as html
@@ -13,6 +12,7 @@ from PIL import Image
 from io import BytesIO
 from dash.exceptions import PreventUpdate
 """
+
 import dataRead
 
 # get relative data folder
@@ -318,6 +318,7 @@ def Body():
                             value=["id_user"],
                             multi=True
                         ),
+                        dcc.Store(id='color-store',storage_type='session'),
                         html.Button(
                             children="submit",
                             id="setting-submit",

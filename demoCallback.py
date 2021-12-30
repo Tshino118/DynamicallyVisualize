@@ -1,17 +1,18 @@
 import dash
 from dash.dependencies import Input, Output, State
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
+#from plotly.subplots import make_subplots
 import dash_core_components as dcc
 import dash_html_components as html
-import dash_daq as daq
-import numpy as np
+#import dash_daq as daq
+#import numpy as np
 import pandas as pd
-import dataRead
 import pathlib
 import math
 import json
 import random
+
+import dataRead
 from figure import figureLayout
 
 def randomColor():
@@ -142,6 +143,7 @@ def add_callbacks(app):
             [   
                 Output(f"graph-area", "children"),
                 Output(f"graph-color","children"),
+                Output(f"color-store","data"),
             ],
             [
                 Input("setting-submit", "n_clicks"),
@@ -288,16 +290,34 @@ def add_callbacks(app):
                 for w in set(w_list)
                 for e in set(e_list)
             ]
+
             #daq.ColorPicker(
             #    id=f'color-picker-button-{title}',
             #    label=f'{title}',
             #    value=dict(hex=f'{color}')
             #)
-            return [figure_table,color_button]
+            color_store={'color_button':[colorDict.keys()]}
+            return [figure_table,color_button,color_store]
     
+    ##add color button
+    #def colorButton_callbacks(app):
+    #    colorButtons=State('color-store', "data")
+    #    colorButtons
+    #    @app.callback(
+    #        [
+    #            Output(f"div-plot-click-message", "children"),
+    #        ],
+    #        [
+    #            Input()
+    #            
+    #        ]
+    #    )
+    #    def colorButtonCallbacks(clickData):
+    #        return [f'{clickData}']
     
+
     #add clicked on graph-area callbacks
-    def plotClick_callbacks():
+    def plotClick_callbacks(app):
         @app.callback(
             [
                 Output(f"div-plot-click-message", "children"),

@@ -1,18 +1,15 @@
-from unicodedata import name
 import plotly.graph_objects as go
 from tqdm import tqdm
+import os
+import pandas as pd
+import glob
 
 def Read_csv_one(path,index_col=None):
-    import os
-    import pandas as pd
     if(os.path.isfile(path)==True):
         df = pd.read_csv(path,index_col=index_col).dropna()
     return df
 
 def Read_csv_multi(dir,index_col=None):
-    import os
-    import pandas as pd
-    import glob
     csv_reader=pd.read_csv
     path_isfile=os.path.isfile
     files = glob.glob(fr"{dir}")
