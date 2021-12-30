@@ -9,8 +9,8 @@ import dash_html_components as html
 import pandas as pd
 import pathlib
 import math
-import json
 import random
+import json
 
 import dataRead
 from figure import figureLayout
