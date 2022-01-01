@@ -331,12 +331,13 @@ def Body():
                 className="six columns",
                 id="main-graph",
                 children=[
+                    html.Div(id="info-selectGroupCount"),
                     html.Div(id="graph-color"),
                     html.Hr(),
                     dcc.Loading(
                         children=[
                             html.Div(id="graph-area"),
-                            html.Div(id="graph-area-cluster",style={'overflow-x': 'scroll','text-align':'left'})
+                            html.Div(id="graph-area-cluster")
                         ]
                     )
                 ],
