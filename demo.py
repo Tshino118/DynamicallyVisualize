@@ -92,7 +92,7 @@ def NamedSlider(name, short, min, max, step, val, marks=None):
         ],
     )
 
-def NamedChecklist(name, short, options):
+def NamedChecklist(name, short, val, options):
     return html.Div(
         style={"margin": "25px 5px 30px 0px"},
         children=[
@@ -109,7 +109,7 @@ def NamedChecklist(name, short, options):
                     dcc.Checklist(
                         id=f"checklist-{short}",
                         options=options,
-                        value=[],
+                        value=val,
                         labelStyle={'display': 'inline-block'}
                     )
                 ],
@@ -187,38 +187,6 @@ def Body():
     feature_dict=dataClass.Feature_dict(feature_unique)
     inputDataLabel=['lerp',"meanZero","medianZero","firstPointZero"]
 
-    def Store():
-        return html.Div(
-            children=[
-                #dcc.Store(
-                #    id="indexes-store",
-                #    storage_type="session",
-                #    data=dataClass.Input_indexes(input_data),
-                #    clear_data=False
-                #),
-
-                #dcc.Store(
-                #    id="figure-store",
-                #    storage_type="session",
-                #    data=dataClass.Figure_dict(input_data),
-                #    clear_data=False
-                #),
-                
-                #dcc.Store(
-                #    id="IO-store",
-                #    storage_type="session",
-                #    data=dataClass.IO_dict(feature_unique,input_features),
-                #    clear_data=False
-                #),
-                #dcc.Store(
-                #    id="kMeans-store",
-                #    storage_type="session",
-                #    data=dataClass.KMeans_dict(),
-                #    clear_data=False
-                #),
-            ]
-        )
-
     return html.Div(
         className="row background",
         id="app-body",
@@ -248,6 +216,8 @@ def Body():
                             #id="checklist-setting-id_user"
                             name="id_user",
                             short='setting-id_user',
+                            #val=[d["value"] for d in feature_dict["id_user"]['options']],
+                            val=["A00000"],
                             options=feature_dict["id_user"]['options'],
                         ),
                         NamedChecklist(
@@ -255,6 +225,7 @@ def Body():
                             #id="checklist-setting-week"
                             name="week",
                             short='setting-week',
+                            val=[d["value"] for d in feature_dict["week"]['options']],
                             options=feature_dict["week"]['options'],
                         ),
                         NamedChecklist(
@@ -262,6 +233,7 @@ def Body():
                             #id="checklist-setting-eye_state"
                             name="eye_state",
                             short='setting-eye_state',
+                            val=[d["value"] for d in feature_dict["eye_state"]['options']],
                             options=feature_dict["eye_state"]['options'],
                         ),
                         NamedSlider(
@@ -271,10 +243,28 @@ def Body():
                             min=2,
                             max=10,
                             step=None,
-                            val=2,
+                            val=6,
                             marks={
                                 i: str(i) for i in range(2,10)
                             },
+                        ),
+                        html.Div(
+                            style={"margin": "25px 5px 30px 0px"},
+                            children=[
+                                f"clustering select",
+                                html.Div(
+                                    style={"margin-left": "5px"},
+                                    id="select-k",
+                                    children=[
+                                        dcc.Checklist(
+                                            id=f"checklist-setting-cluster",
+                                            options=[{"label": k,"value": k} for k in [0,1]],
+                                            value=[0,1],
+                                            labelStyle={'display': 'inline-block'}
+                                        )
+                                    ]
+                                ),
+                            ],
                         ),
                         dcc.Dropdown(
                             id="dropdown-setting-clusteringData",
@@ -301,7 +291,7 @@ def Body():
                                 {"label": 'CoPx-CoPy',"value": "XY"},
                             ],
                             placeholder="Selects graph type",
-                            value=["timeX","timeY","XY"],
+                            value=["timeXY"],
                             multi=True
                         ),
                         dcc.Dropdown(
@@ -315,10 +305,10 @@ def Body():
                                 {"label": 'cluster',"value": "cluster"},
                             ],
                             placeholder="Selects graph color",
-                            value=["id_user"],
+                            value=["id_user","cluster"],
                             multi=True
                         ),
-                        dcc.Store(id='color-store',storage_type='session'),
+                        html.Div(id="info-selectGroupCount"),
                         html.Button(
                             children="submit",
                             id="setting-submit",
@@ -332,13 +322,26 @@ def Body():
                 id="main-graph",
                 children=[
                     html.Div(id="graph-color"),
+                    html.Button(
+                        children="clusterChange",
+                        id="setting-clusterChange-submit",
+                        n_clicks=0
+                    ),
                     html.Hr(),
                     dcc.Loading(
                         children=[
                             html.Div(id="graph-area"),
-                            html.Div(id="graph-area-cluster",style={'overflow-x': 'scroll','text-align':'left'})
+                        ]
+                    ),
+                    dcc.Loading(
+                        children=[
+                            html.Div(id="graph-area-timeX",style={'overflow-x': 'scroll','text-align':'left'}),
+                            html.Div(id="graph-area-timeY",style={'overflow-x': 'scroll','text-align':'left'}),
+                            html.Div(id="graph-area-XY",style={'overflow-x': 'scroll','text-align':'left'}),
+                            html.Div(id="graph-area-timeXY",style={'overflow-x': 'scroll','text-align':'left'}),
                         ]
                     )
+
                 ],
             ),
             html.Div(
@@ -372,6 +375,7 @@ def add_layout():
         className="row",
         style={"max-width": "100%", "font-size": "1.5rem", "padding": "0px 0px"},
         children=[
+            dcc.Store(id="data-store",data={},storage_type="session",clear_data=False),
             # header
             Header(),
             # description
