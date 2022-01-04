@@ -321,6 +321,7 @@ def Body():
                 className="six columns",
                 id="main-graph",
                 children=[
+                    html.Div(id="info-selectGroupCount"),
                     html.Div(id="graph-color"),
                     html.Button(
                         children="clusterChange",
@@ -331,6 +332,7 @@ def Body():
                     dcc.Loading(
                         children=[
                             html.Div(id="graph-area"),
+<<<<<<< HEAD
                         ]
                     ),
                     dcc.Loading(
@@ -339,6 +341,9 @@ def Body():
                             html.Div(id="graph-area-timeY",style={'overflow-x': 'scroll','text-align':'left'}),
                             html.Div(id="graph-area-XY",style={'overflow-x': 'scroll','text-align':'left'}),
                             html.Div(id="graph-area-timeXY",style={'overflow-x': 'scroll','text-align':'left'}),
+=======
+                            html.Div(id="graph-area-cluster")
+>>>>>>> f59d2e49199d128cf6deb5cc2445540639d18874
                         ]
                     )
 
