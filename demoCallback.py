@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 from copy import deepcopy
-=======
-from copy import copy
->>>>>>> f59d2e49199d128cf6deb5cc2445540639d18874
 import dash
 from dash.dependencies import Input, Output, State
 import plotly.graph_objects as go
@@ -135,16 +131,8 @@ def add_callbacks(app):
     
     def select_k_callbacks():
         @app.callback(
-<<<<<<< HEAD
             [
                 Output('select-k', 'children')
-=======
-            [   
-                Output(f"graph-area", "children"),
-                Output(f"info-selectGroupCount","children"),
-                Output(f"graph-color","children"),
-                Output(f"graph-area-cluster","children")
->>>>>>> f59d2e49199d128cf6deb5cc2445540639d18874
             ],
             [
                 Input("slider-setting-numberOfClusters", "value")
@@ -232,24 +220,11 @@ def add_callbacks(app):
             w_list=[0 for _ in select_data_index]
             e_list=[0 for _ in select_data_index]
 
-<<<<<<< HEAD
             k_select_list=[cluster_dict[cluster_df.at[index,str(numberOfClusters)]] for index in select_data_index]#->int index list
             i_select_list=[id_dict[feature.at[index,'id_user']] for index in select_data_index]#->int index list
             w_select_list=[week_dict[feature.at[index,'week']] for index in select_data_index]#->int index list
             e_select_list=[eye_dict[feature.at[index,'eye_state']] for index in select_data_index]#->int index list
             
-=======
-            k_select_list=[cluster_dict[index] for index in select_data_index]#->int index list
-            i_select_list=[id_dict[feature.at[index,'id_user']] for index in select_data_index]#->int index list
-            w_select_list=[week_dict[feature.at[index,'week']] for index in select_data_index]#->int index list
-            e_select_list=[eye_dict[feature.at[index,'eye_state']] for index in select_data_index]#->int index list
-
-            k_select_list_gcount=pd.Series(data=k_select_list).value_counts()
-            i_select_list_gcount=pd.Series(data=i_select_list).value_counts()
-            w_select_list_gcount=pd.Series(data=w_select_list).value_counts()
-            e_select_list_gcount=pd.Series(data=e_select_list).value_counts()
-
->>>>>>> f59d2e49199d128cf6deb5cc2445540639d18874
             if "cluster" in set(selectColor):
                 k_list=k_select_list
             if "id_user" in set(selectColor):
@@ -258,7 +233,6 @@ def add_callbacks(app):
                 w_list=w_select_list
             if "eye_state" in set(selectColor):
                 e_list=e_select_list
-<<<<<<< HEAD
             data['k_list']=k_list
             data['i_list']=i_list
             data['w_list']=w_list
@@ -269,8 +243,6 @@ def add_callbacks(app):
             data['w_select_list']=w_select_list
             data['e_select_list']=e_select_list
             
-=======
->>>>>>> f59d2e49199d128cf6deb5cc2445540639d18874
             
             #colorSet=[
             #    colorDict[f"{k}_{i}_{w}_{e}"] 
@@ -324,12 +296,7 @@ def add_callbacks(app):
                         )
                     ]
                 )
-<<<<<<< HEAD
             colorbutton=[
-=======
-            selectGroupCount=html.P(children=f"k:{k_select_list_gcount}, id:{i_select_list_gcount}, week:{w_select_list_gcount}, eye:{e_select_list_gcount}")
-            color_button=[
->>>>>>> f59d2e49199d128cf6deb5cc2445540639d18874
                 colorButtonSet(
                     title=f"cluster:{k}, id:{id_user[i]}, week:{week[w]}, eye:{eye_state[e]}  ",
                     short=f"{k}_{i}_{w}_{e}",
@@ -441,15 +408,10 @@ def add_callbacks(app):
                         )
                         for figureData,k,i,w,e in zip(figure.data,k_list,i_list,w_list,e_list):
                             figureData['line']['color']=colorDict[f"{k}_{i}_{w}_{e}"]
-<<<<<<< HEAD
                             
                         tr+=[html.Td(children=dcc.Graph(figure=figure,id=f"graph-element-{graphType}"))]
                         #figure_=deepcopy(figure)
                         #dataTypeCluster+=[html.Div(children=[figureCluster(figure_=figure_,k_select_list_=k_select_list,numberOfClusters_=numberOfClusters,numberOfClusters_index_=numberOfClusters_index)])]
-=======
-                        tr+=[html.Td(children=dcc.Graph(figure=figure,id=f"graph-element-{row}{col}", style={"height": "98vh"}))]
-                        dataTypeCluster+=[html.Div(children=figureCluster(figure_=figure,k_select_list_=k_select_list,numberOfClusters_=numberOfClusters,numberOfClusters_index_=numberOfClusters_index))]
->>>>>>> f59d2e49199d128cf6deb5cc2445540639d18874
                         cnt+=1
                     else:
                         tr+=[html.Td(id=f"graph-element-{row}{col}", style={"height": "98vh"})]
@@ -582,33 +544,10 @@ def add_callbacks(app):
                 tb+=[html.Tr(children=tr)]
             figure_table=html.Table(children=html.Tbody(children=tb))
             
-<<<<<<< HEAD
             c_m_thead=html.Thead()
             c_m_tbody=html.Tbody()
             c_m_table=html.Table(id='cluster-matrix',children=[c_m_thead,c_m_tbody])
             return c_m_table
-=======
-            return [figure_table,selectGroupCount,color_button,figure_cluster]
-
-            
-    
-    ##add color button
-    #def colorButton_callbacks(app):
-    #    colorButtons=State('color-store', "data")
-    #    colorButtons
-    #    @app.callback(
-    #        [
-    #            Output(f"div-plot-click-message", "children"),
-    #        ],
-    #        [
-    #            Input()
-    #            
-    #        ]
-    #    )
-    #    def colorButtonCallbacks(clickData):
-    #        return [f'{clickData}']
-    
->>>>>>> f59d2e49199d128cf6deb5cc2445540639d18874
 
     #add clicked on graph-area callbacks
     def plotClick_callbacks():
