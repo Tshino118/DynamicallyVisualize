@@ -321,7 +321,8 @@ def Body():
                 className="six columns",
                 id="main-graph",
                 children=[
-                    html.Div(id="graph-color"),
+                    #
+                    # html.Div(id="graph-color"),
                     html.Button(
                         children="clusterChange",
                         id="setting-clusterChange-submit",
@@ -344,28 +345,28 @@ def Body():
 
                 ],
             ),
-            html.Div(
-                className="three columns",
-                id="plot-click",
-                children=[
-                    Card(
-                        style={"padding": "5px"},
-                        children=[
-                            html.Div(
-                                id="div-plot-click-message",
-                                children=['click-message'],
-                                style={
-                                    "text-align": "center",
-                                    "margin-bottom": "7px",
-                                    "font-weight": "bold",
-                                },
-                            ),
-                            html.Div(id="div-plot-click-image"),
-                            #html.Div(id="div-plot-click-wordemb"),
-                        ],
-                    )
-                ],
-            ),
+            #html.Div(
+            #    className="three columns",
+            #    id="plot-click",
+            #    children=[
+            #        Card(
+            #            style={"padding": "5px"},
+            #            children=[
+            #                html.Div(
+            #                    id="div-plot-click-message",
+            #                    children=['click-message'],
+            #                    style={
+            #                        "text-align": "center",
+            #                        "margin-bottom": "7px",
+            #                        "font-weight": "bold",
+            #                    },
+            #                ),
+            #                html.Div(id="div-plot-click-image"),
+            #                #html.Div(id="div-plot-click-wordemb"),
+            #            ],
+            #        )
+            #    ],
+            #),
         ],
     )
 
